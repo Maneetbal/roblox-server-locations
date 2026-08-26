@@ -1,175 +1,166 @@
 # Roblox Server Locations
 
-A community maintained list of Roblox server locations, IP ranges, and known cloud hosted endpoints. It is intended as a reference for finding the approximate location of Roblox game servers and understanding the network ranges associated with them.
+> **Roblox server locations • Roblox datacenters • Roblox IP ranges • Roblox server list**
 
-> **Status:** Community compiled from network observations and research. This is not an official Roblox published server location list.
+A community-maintained, searchable reference of **Roblox server locations, datacenters, IP ranges, and known cloud-hosted endpoints**. It is intended to make Roblox server-region research and network troubleshooting easier.
+
+**Important:** This is **not an official Roblox server-location directory**. Entries are based on network observations, IP geolocation, and research, so locations should be treated as approximate unless independently confirmed.
+
+**Quick links:** [United States](#united-states) · [United Kingdom](#united-kingdom) · [Europe](#europe) · [Asia](#asia) · [Singapore](#singapore) · [Australia](#australia) · [Brazil](#brazil) · [Possibly Decommissioned](#possibly-decommissioned) · [Notes](#notes)
 
 ## United States
 
 ### Seattle, Washington
-128.116.115.0/24
+- `128.116.115.0/24`
 
 ### Boardman, Oregon
-44.234.152.188/32 (AWS)
-
-35.95.103.79/32 (AWS)
+- `44.234.152.188/32` (AWS)
+- `35.95.103.79/32` (AWS)
 
 ### Los Angeles, California
-128.116.116.0/24
-
-128.116.1.0/24
-
-128.116.63.0/24
+- `128.116.116.0/24`
+- `128.116.1.0/24`
+- `128.116.63.0/24`
 
 ### Dallas, Texas
-128.116.14.0/24
-
-128.116.95.0/24
+- `128.116.14.0/24`
+- `128.116.95.0/24`
 
 ### Chicago, Illinois
-128.116.48.0/24
-
-128.116.84.0/24 (Not sure, around Chicago)
+- `128.116.48.0/24`
+- `128.116.84.0/24` (uncertain; around Chicago)
 
 ### Columbus, Ohio
-18.116.102.234/32 (AWS)
-
-3.15.190.178/32 (AWS)
-
-18.189.2.122 (AWS)
+- `18.116.102.234/32` (AWS)
+- `3.15.190.178/32` (AWS)
+- `18.189.2.122/32` (AWS)
 
 ### Atlanta, Georgia
-128.116.2.0/24
+- `128.116.2.0/24`
 
 ### Miami, Florida
-128.116.45.0/24
-
-128.116.127.0/24
+- `128.116.45.0/24`
+- `128.116.127.0/24`
 
 ### Ashburn, Virginia
-128.116.102.0/24
-
-128.116.53.0/24
-
-107.180.197.0/24 (Doesn't respond to ICMP)
-
-128.116.56.0/24
-
-44.197.17.243 (AWS)
+- `128.116.102.0/24`
+- `128.116.53.0/24`
+- `107.180.197.0/24` (doesn't respond to ICMP)
+- `128.116.56.0/24`
+- `44.197.17.243/32` (AWS)
 
 ### New York City, New York
-128.116.32.0/24
+- `128.116.32.0/24`
 
 ### San Jose, California
-128.116.117.0/24
-
-128.116.67.0/24
-
-209.206.42.0/24
-
-209.206.43.0/24
+- `128.116.117.0/24`
+- `128.116.67.0/24`
+- `209.206.42.0/24`
+- `209.206.43.0/24`
 
 ## United Kingdom
 
 ### London, UK
-128.116.31.0/24
+- `128.116.31.0/24`
 
 ## Netherlands
 
 ### Amsterdam, Netherlands
-128.116.21.0/24
+- `128.116.21.0/24`
 
 ## France
 
 ### Paris, France
-128.116.13.0/24
+- `128.116.13.0/24`
 
 ## Germany
 
 ### Frankfurt, Germany
-128.116.5.0/24
-
-128.116.44.0/24
-
-35.71.105.17/32 (AWS)
+- `128.116.5.0/24`
+- `128.116.44.0/24`
+- `35.71.105.17/32` (AWS)
 
 ## India
 
 ### Mumbai, India
-128.116.47.0/24
-
-3.7.80.5/32 (AWS)
+- `128.116.47.0/24`
+- `3.7.80.5/32` (AWS)
 
 ## Japan
 
 ### Osaka, Japan
-13.248.8.50/32 (AWS)
+- `13.248.8.50/32` (AWS)
 
 ### Tokyo, Japan
-128.116.55.0/24
-
-128.116.120.0/24
-
-54.95.107.5/32 (AWS)
+- `128.116.55.0/24`
+- `128.116.120.0/24`
+- `54.95.107.5/32` (AWS)
 
 ## Singapore
 
 ### Singapore
-128.116.46.0/24
-
-128.116.50.0/24
-
-128.116.54.0/24
-
-128.116.97.0/24
-
-54.254.157.9/32 (AWS)
+- `128.116.46.0/24`
+- `128.116.50.0/24`
+- `128.116.54.0/24`
+- `128.116.97.0/24`
+- `54.254.157.9/32` (AWS)
 
 ## Ireland
 
 ### Dublin, Ireland
-46.51.192.207/32 (AWS)
+- `46.51.192.207/32` (AWS)
 
 ## Australia
 
 ### Sydney, Australia
-128.116.51.0/24
+- `128.116.51.0/24`
 
 ## Brazil
 
 ### São Paulo, Brazil
-128.116.86.0/24
-
-52.67.110.115/32 (AWS)
+- `128.116.86.0/24`
+- `52.67.110.115/32` (AWS)
 
 ## Possibly Decommissioned
 
-These locations or IP ranges may no longer be active. They are kept here for historical reference and future verification.
+These locations or IP ranges may no longer be active. They are retained for historical reference and future verification.
 
 ### Hong Kong
-128.116.30.0/24
-
-128.116.118.0/24
+- `128.116.30.0/24`
+- `128.116.118.0/24`
 
 ### Atlanta, Georgia
-128.116.22.0/24
-
-128.116.99.0/24
+- `128.116.22.0/24`
+- `128.116.99.0/24`
 
 ### Mumbai, India
-128.116.104.0/24
+- `128.116.104.0/24`
 
 ## Notes
 
-IP addresses and server infrastructure can change over time. AWS addresses are marked separately where they were identified as AWS hosted endpoints.
+IP addresses and server infrastructure can change over time. AWS addresses are marked separately where they were identified as AWS-hosted endpoints.
 
-Some entries are uncertain. For example, 128.116.84.0/24 is noted as being around Chicago rather than confirmed as a Chicago Roblox location.
+Some entries are uncertain. For example, `128.116.84.0/24` is noted as being around Chicago rather than confirmed as a Chicago Roblox location.
 
 The decommissioned section contains older entries that may no longer respond or may have been replaced.
 
-AWS hosted IP addresses can change frequently. Because of this, the AWS IPs listed here are especially likely to become outdated or incorrect over time. The AWS location may still be relevant even when the specific IP address is no longer in use.
+AWS-hosted IP addresses can change frequently, so the specific IPs listed here are especially likely to become outdated even when the corresponding location remains relevant.
 
-IP geolocation can also point to a nearby city rather than the exact physical server facility. Locations in this repository should therefore be treated as approximate unless independently confirmed.
+IP geolocation may point to a nearby city rather than the exact physical server facility. Locations in this repository should therefore be treated as approximate unless independently confirmed.
+
+## Search / Keywords
+
+This repository is intended to be easy to find for searches such as:
+
+- Roblox server locations
+- Roblox server list
+- Roblox datacenter locations
+- Roblox datacenter map
+- Roblox server regions
+- Roblox IP ranges
+- Roblox game server IPs
+- Roblox AWS server locations
+- Roblox server locations by country
 
 ## Source and Method
 
@@ -179,4 +170,4 @@ When possible, uncertain and historical entries are kept with notes instead of b
 
 ## Related Information
 
-This repository focuses on Roblox server locations, Roblox IP ranges, Roblox datacenter locations, and network infrastructure that can be observed from public network data.
+This repository focuses on **Roblox server locations, Roblox IP ranges, Roblox datacenter locations, Roblox server regions, and network infrastructure** that can be observed from public network data.
