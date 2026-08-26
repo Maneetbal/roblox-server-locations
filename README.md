@@ -167,6 +167,8 @@ Some entries are uncertain. For example, 128.116.84.0/24 is noted as being aroun
 
 The decommissioned section contains older entries that may no longer respond or may have been replaced.
 
+AWS hosted IP addresses can change frequently. Because of this, the AWS IPs listed here are especially likely to become outdated or incorrect over time. The AWS location itself may still be relevant even when the specific IP address is no longer in use.
+
 This repository is intended as a reference for people interested in Roblox network infrastructure and server locations. It does not claim to represent Roblox's complete internal infrastructure.
 
 ## Source and Method
