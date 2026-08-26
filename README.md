@@ -1,52 +1,52 @@
 # Roblox Server Locations
 
-A community maintained list of Roblox server locations, IP ranges, and known cloud hosted endpoints.
+A community maintained reference for Roblox server locations, IP ranges, and known cloud hosted endpoints.
 
-Last updated: 2026-26-5
+> **Status:** Community compiled from network observations and research. This is not an official Roblox published list.
 
 ## United States
 
-### Seattle, WA
+### Seattle, Washington
 128.116.115.0/24 (.33)
 
-### Boardman, OR
+### Boardman, Oregon
 44.234.152.188/32 (AWS)
 
 35.95.103.79/32 (AWS)
 
-### Los Angeles, CA
+### Los Angeles, California
 128.116.116.0/24
 
 128.116.1.0/24
 
 128.116.63.0/24
 
-### Dallas, TX
+### Dallas, Texas
 128.116.14.0/24
 
 128.116.95.0/24
 
-### Chicago, IL
+### Chicago, Illinois
 128.116.48.0/24
 
 128.116.84.0/24 (Not sure, around Chicago)
 
-### Columbus, OH
+### Columbus, Ohio
 18.116.102.234/32 (AWS)
 
 3.15.190.178/32 (AWS)
 
 18.189.2.122 (AWS)
 
-### Atlanta, GA
+### Atlanta, Georgia
 128.116.2.0/24
 
-### Miami, FL
+### Miami, Florida
 128.116.45.0/24
 
 128.116.127.0/24
 
-### Ashburn, VA
+### Ashburn, Virginia
 128.116.102.0/24
 
 128.116.53.0/24
@@ -57,10 +57,10 @@ Last updated: 2026-26-5
 
 44.197.17.243 (AWS)
 
-### New York City, NY
+### New York City, New York
 128.116.32.0/24
 
-### San Jose, CA
+### San Jose, California
 128.116.117.0/24
 
 128.116.67.0/24
@@ -76,17 +76,17 @@ Last updated: 2026-26-5
 
 ## Netherlands
 
-### Amsterdam, NL
+### Amsterdam, Netherlands
 128.116.21.0/24
 
 ## France
 
-### Paris, FR
+### Paris, France
 128.116.13.0/24
 
 ## Germany
 
-### Frankfurt, DE
+### Frankfurt, Germany
 128.116.5.0/24
 
 128.116.44.0/24
@@ -95,17 +95,17 @@ Last updated: 2026-26-5
 
 ## India
 
-### Mumbai, IN
+### Mumbai, India
 128.116.47.0/24
 
 3.7.80.5/32 (AWS)
 
 ## Japan
 
-### Osaka, JP
+### Osaka, Japan
 13.248.8.50/32 (AWS)
 
-### Tokyo, JP
+### Tokyo, Japan
 128.116.55.0/24
 
 128.116.120.0/24
@@ -127,42 +127,50 @@ Last updated: 2026-26-5
 
 ## Ireland
 
-### Dublin, IE
+### Dublin, Ireland
 46.51.192.207/32 (AWS)
 
 ## Australia
 
-### Sydney, AU
+### Sydney, Australia
 128.116.51.0/24
 
 ## Brazil
 
-### Sao Paulo, BR
+### São Paulo, Brazil
 128.116.86.0/24
 
 52.67.110.115/32 (AWS)
 
 ## Possibly Decommissioned
 
-These locations or IP ranges may no longer be active.
+These locations or IP ranges may no longer be active. They are kept here for historical reference and future verification.
 
 ### Hong Kong
 128.116.30.0/24
 
 128.116.118.0/24
 
-### Atlanta, GA
+### Atlanta, Georgia
 128.116.22.0/24
 
 128.116.99.0/24
 
-### Mumbai, IN
+### Mumbai, India
 128.116.104.0/24
 
 ## Notes
 
-This is a community compiled list and the IP addresses can change over time. AWS addresses are listed separately where they were identified as AWS hosted endpoints.
+IP addresses and server infrastructure can change over time. AWS addresses are marked separately where they were identified as AWS hosted endpoints.
 
-Some entries are uncertain or may be old. They are kept here so they can be checked against newer information instead of being removed without documentation.
+Some entries are uncertain. For example, 128.116.84.0/24 is noted as being around Chicago rather than confirmed as a Chicago Roblox location.
 
-The locations and IP ranges in this repository are based on network observations and research. They are not an official Roblox published list of server locations.
+The decommissioned section contains older entries that may no longer respond or may have been replaced.
+
+This repository is intended as a reference for people interested in Roblox network infrastructure and server locations. It does not claim to represent Roblox's complete internal infrastructure.
+
+## Source and Method
+
+The locations and IP ranges in this repository were compiled through network observations and research. They should be treated as observed or inferred locations rather than an official Roblox datacenter directory.
+
+When possible, uncertain and historical entries are kept with notes instead of being removed so that they can be compared with future observations.
