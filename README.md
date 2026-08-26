@@ -1,8 +1,8 @@
 # Roblox Server Locations
 
-A community maintained reference for Roblox server locations, IP ranges, and known cloud hosted endpoints.
+A community maintained list of Roblox server locations, IP ranges, and known cloud hosted endpoints. It is intended as a reference for finding the approximate location of Roblox game servers and understanding the network ranges associated with them.
 
-> **Status:** Community compiled from network observations and research. This is not an official Roblox published list.
+> **Status:** Community compiled from network observations and research. This is not an official Roblox published server location list.
 
 ## United States
 
@@ -73,6 +73,8 @@ A community maintained reference for Roblox server locations, IP ranges, and kno
 
 ### London, UK
 128.116.31.0/24
+
+128.116.119.0/24
 
 ## Netherlands
 
@@ -169,10 +171,14 @@ The decommissioned section contains older entries that may no longer respond or 
 
 AWS hosted IP addresses can change frequently. Because of this, the AWS IPs listed here are especially likely to become outdated or incorrect over time. The AWS location may still be relevant even when the specific IP address is no longer in use.
 
-This repository is intended as a reference for people interested in Roblox network infrastructure and server locations. It does not claim to represent Roblox's complete internal infrastructure.
+IP geolocation can also point to a nearby city rather than the exact physical server facility. Locations in this repository should therefore be treated as approximate unless independently confirmed.
 
 ## Source and Method
 
-The locations and IP ranges in this repository were compiled through network observations and research. They should be treated as observed or inferred locations rather than an official Roblox datacenter directory.
+The locations and IP ranges in this repository were compiled through network observations, IP geolocation, and research. They should be treated as observed or inferred locations rather than an official Roblox datacenter directory.
 
 When possible, uncertain and historical entries are kept with notes instead of being removed so that they can be compared with future observations.
+
+## Related Information
+
+This repository focuses on Roblox server locations, Roblox IP ranges, Roblox datacenter locations, and network infrastructure that can be observed from public network data.
