@@ -74,8 +74,6 @@ A community maintained list of Roblox server locations, IP ranges, and known clo
 ### London, UK
 128.116.31.0/24
 
-128.116.119.0/24
-
 ## Netherlands
 
 ### Amsterdam, Netherlands
