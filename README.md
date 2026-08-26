@@ -150,6 +150,16 @@ These are older Roblox server ranges that may no longer be active. They are kept
 ### London, UK
 * `128.116.119.0/24`
 
+## Roblox Owned Ranges With Few Or No Confirmed Server IPs
+
+Roblox also owns or controls additional IP space where only a small number of server IPs have been identified, or where no active Roblox game server IPs have been confirmed yet.
+
+### 107.180.192.0/20
+Only a few IPs from this subnet have been associated with Roblox server infrastructure, and there are currently very few confirmed server IPs in this range.
+
+### 209.206.40.0/21
+This subnet belongs to Roblox, but only a few server IPs have been identified from it so far. More research is needed to determine how much of this range is used for active Roblox game servers.
+
 ## Notes
 
 Roblox server infrastructure can change over time. An IP range being listed here does not necessarily mean that Roblox is still using it for active game servers today.
@@ -164,7 +174,7 @@ IP geolocation is not always exact. A database may identify a nearby city instea
 
 ## Search Terms
 
-Roblox server locations, Roblox server list, Roblox datacenter locations, Roblox datacenter map, Roblox server regions, Roblox IP ranges, Roblox server IPs, Roblox game server IP addresses, Roblox AWS servers, Roblox server locations by country, Roblox server locations by city, Roblox network infrastructure, Roblox server latency, Roblox server ping, Roblox datacenter IP addresses.
+Roblox server locations, Roblox server list, Roblox datacenter locations, Roblox datacenter map, Roblox server regions, Roblox IP ranges, Roblox server IPs, Roblox game server IP addresses, Roblox AWS servers, Roblox server locations by country, Roblox server locations by city, Roblox network infrastructure, Roblox server latency, Roblox server ping, Roblox datacenter IP addresses, Roblox owned IP ranges, Roblox IP blocks, Roblox subnets, Roblox network ranges, Roblox server subnet list.
 
 ## How this information is collected
 
