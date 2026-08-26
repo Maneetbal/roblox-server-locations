@@ -172,6 +172,12 @@ The Possibly Decommissioned section contains ranges that have been observed in t
 
 IP geolocation is not always exact. A database may identify a nearby city instead of the actual facility where a server is located.
 
+## Please Contribute
+
+If you notice anything that is incorrect, outdated, missing, or uncertain, please contribute to the project. New server IPs, subnets, locations, corrections, and updated observations are all welcome.
+
+If you have evidence that a listed range is being used somewhere else, is no longer active, or was incorrectly identified, please share it so the information can be reviewed and updated.
+
 ## Search Terms
 
 Roblox server locations, Roblox server list, Roblox datacenter locations, Roblox datacenter map, Roblox server regions, Roblox IP ranges, Roblox server IPs, Roblox game server IP addresses, Roblox AWS servers, Roblox server locations by country, Roblox server locations by city, Roblox network infrastructure, Roblox server latency, Roblox server ping, Roblox datacenter IP addresses, Roblox owned IP ranges, Roblox IP blocks, Roblox subnets, Roblox network ranges, Roblox server subnet list.
