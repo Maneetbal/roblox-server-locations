@@ -136,6 +136,9 @@ These locations or IP ranges may no longer be active. They are retained for hist
 ### Mumbai, India
 - `128.116.104.0/24`
 
+### London, UK
+- `128.116.119.0/24`
+
 ## Notes
 
 IP addresses and server infrastructure can change over time. AWS addresses are marked separately where they were identified as AWS-hosted endpoints.
