@@ -109,7 +109,7 @@ These additional subnets are documented for future investigation only. Their pre
 
 ## Ownership and locations
 
-“Roblox-registered” describes the network registrant shown in public Internet registry records. The Roblox-registered file includes 107.180.197.0/24, which is registered to Roblox and hosted on AWS; it is grouped by registrant. The AWS file contains the other AWS ranges associated with Roblox server use. AWS use of these entries is maintainer-confirmed.
+“Roblox-registered” describes the network registrant shown in public Internet registry records. The Roblox-registered file includes 107.180.197.0/24, which is registered to Roblox and hosted on AWS; it is grouped by registrant. The AWS file contains the other AWS ranges associated with Roblox server use. AWS use of these entries is maintainer-confirmed. In my observations, Roblox AWS servers are uncommon and appear mostly when a region is full or more capacity is needed.
 
 The country and city groupings describe observed or estimated network locations, not verified physical data-center addresses. AWS public IP ranges and its geo-IP feed help identify network assignment and location hints. IP assignments and routing can change, and this list may not include every Roblox server IP.
 
