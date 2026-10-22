@@ -1,6 +1,6 @@
 # Maintaining the Roblox server IP lists
 
-These files are community-maintained and are not an official Roblox inventory. Keep the three datasets synchronized:
+These files are community-maintained and are not an official Roblox inventory. Keep the three datasets and the README's inline Roblox-owned list synchronized:
 
 - roblox-owned-ip-addresses.txt
 - aws-roblox-server-ip-addresses.txt
@@ -20,5 +20,5 @@ These files are community-maintained and are not an official Roblox inventory. K
 - Recheck records and observed endpoints periodically; note the source and date.
 - Remove an entry only when there is sufficient evidence it is no longer relevant.
 - Deduplicate exact repeated CIDRs when they refer to the same listed range. If locations conflict, retain the best-supported label and record the basis in the changelog.
-- When the data changes, update all three files, their dates, and CHANGELOG.md.
+- When the data changes, update all three list files, the README's inline Roblox-owned list, their dates, and CHANGELOG.md.
 - Do not claim completeness or a statistical accuracy rate unless measured and documented.
