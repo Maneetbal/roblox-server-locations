@@ -20,6 +20,26 @@ GlassWire observations of game instances commonly show Roblox game-server connec
 
 Address 128.116.115.4 also responds to ICMP, but I have not identified which service it represents. The separate 3.80.0.0/32 entry is an AWS ICMP latency probe and intentionally overlaps the broader 3.80.0.0/12 prefix.
 
+## Additional network observations
+
+The following notes are README references only; they do not add or change entries in the active IP list files.
+
+### Rare Roblox game-instance observations: 209.206.40.0/21
+
+ARIN registers 209.206.40.0/21 to Roblox. In my GlassWire observations, Roblox use of this broader subnet has been rare: I have seen about four game instances so far, all located in San Jose. That is the only location I have observed to date, not evidence that the entire subnet is reserved to San Jose; it may be used in other locations. The existing narrower 209.206.42.0/24 and 209.206.43.0/24 entries remain as listed. [ARIN RDAP record](https://rdap.arin.net/registry/ip/209.206.40.0)
+
+### Roblox-registered ranges not yet added to active lists
+
+Public registration records list 107.180.192.0/20 to Roblox. Within it, 107.180.192.0/21 and 107.180.200.0/21 are named ROBLOX-AWS-PUBLIC and ROBLOX-AWS-PUBLIC-2. The separate 204.13.168.0/21 allocation is also registered to Roblox Corporation. These registry records establish registration; they do not by themselves identify which services use the ranges. These ranges are documented here only and have not been added to the active lists. [107.180.192.0/20 RDAP](https://rdap.arin.net/registry/ip/107.180.192.0) · [ROBLOX-AWS-PUBLIC-2 RDAP](https://rdap.arin.net/registry/ip/107.180.200.0) · [204.13.168.0/21 RDAP](https://rdap.arin.net/registry/ip/204.13.168.0)
+
+### Unclassified candidate subnets
+
+These additional subnets are documented for future investigation only. Their presence here does not confirm Roblox ownership or game-server use, and they are not in the active lists:
+
+- 103.140.28.0/23
+- 141.193.3.0/24
+- 205.201.62.0/24
+
 ## Ownership and locations
 
 “Roblox-registered” describes the network registrant shown in public Internet registry records. The Roblox-registered file includes 107.180.197.0/24, which is registered to Roblox and hosted on AWS; it is grouped by registrant. The AWS file contains the other AWS ranges associated with Roblox server use. AWS use of these entries is maintainer-confirmed.
