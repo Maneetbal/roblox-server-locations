@@ -8,7 +8,7 @@ These files are community-maintained and are not an official Roblox inventory. K
 
 ## Evidence and classification
 
-1. Record how a candidate address was observed. Roblox Player connection logs or a captured Roblox game-session endpoint support Roblox-use attribution. An ICMP reply alone does not establish Roblox use.
+1. Record observable evidence for each candidate, such as Wireshark capture results or GlassWire per-process connection records showing a Roblox Player or game-instance connection to that IP. Include the timestamp, remote IP, and protocol when available. An ICMP reply alone does not establish Roblox use.
 2. Check the network registrant with the relevant Regional Internet Registry (RIR) RDAP service. Put Roblox-registered networks in the Roblox-registered list. If a Roblox-registered block is hosted on AWS, note that fact; classify it by registrant to avoid duplicate listing.
 3. For AWS-owned addresses, compare the prefix with [AWS public IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json) and use the [AWS geo-IP feed](https://ip-ranges.amazonaws.com/geo-ip-feed.csv) as a location hint. AWS use of the entries already in this dataset is maintainer-confirmed.
 4. Treat city names as estimates unless independently supported by stronger location evidence. A registry record or geo-IP city is not proof of a physical facility. Preserve existing uncertainty and reachability notes.
