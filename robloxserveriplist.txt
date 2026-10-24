@@ -2,6 +2,8 @@ Roblox Server IP List
 =====================
 Last updated: 2026-10-22
 
+Note: AWS-associated Roblox server entries are treated as reserved capacity for periods of high demand, when a primary region is full, or when another region is unavailable or degraded. This is a community-maintainer interpretation based on observations, not a guarantee of Roblox's internal deployment policy.
+
 United States
 -------------
 - Ashburn, VA
@@ -529,7 +531,7 @@ United States
   - 216.244.40.0/21 (AWS)
 - Atlanta, GA
   - 128.116.2.0/24
-- Boardman, OR
+- Boardman, OR (Reserved)
   - 1.178.1.0/24 (AWS)
   - 1.178.9.0/24 (AWS)
   - 1.178.65.0/24 (AWS)
@@ -896,7 +898,8 @@ United States
   - 198.41.101.0/24 (AWS)
 - New York City, NY
   - 128.116.32.0/24
-- San Jose, CA
+  - 128.116.30.3 (observed endpoint; location based on network testing)
+- San Jose, CA (Reserved)
   - 1.178.100.0/24 (AWS)
   - 3.2.54.0/24 (AWS)
   - 3.2.86.0/24 (AWS)
