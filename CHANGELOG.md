@@ -8,3 +8,9 @@
 - Removed the former “Decommissioned?” section from the active dataset.
 - Removed the repeated 136.18.142.0/24 entry from Frankfurt; AWS geo-IP data identifies the range with Istanbul, so the Istanbul entry remains.
 - Replaced the README's full inline dump with links, scope, methodology, limitations, and maintenance guidance.
+
+## 2026-10-23
+
+- Added the observed endpoint 128.116.30.3 under New York City, with a note that the location is based on network testing.
+- Marked San Jose, CA and Boardman, OR as reserved in the lists.
+- Documented AWS-associated Roblox server entries as reserve capacity that may be used during high demand, full regions, or regional outages/degradation; this is a maintainer interpretation, not a confirmed statement of Roblox's internal policy.
