@@ -8,15 +8,13 @@ Community-maintained reference for Roblox game server IP addresses, CIDR ranges,
 
 | Dataset | Contents |
 | --- | --- |
-| [roblox-owned-ip-addresses.txt](https://github.com/Maneetbal/roblox-server-locations/blob/main/roblox-owned-ip-addresses.txt "roblox-owned-ip-addresses.txt") | 34 Roblox-registered entries. |
-| [AWS IP ranges used by Roblox](aws-roblox-server-ip-addresses.txt) | 2,043 existing AWS entries, including the Ashburn ICMP latency probe. |
+| [roblox-owned-ip-addresses.txt](https://github.com/Maneetbal/roblox-server-locations/blob/main/roblox-owned-ip-addresses.txt "roblox-owned-ip-addresses.txt") | Roblox-registered entries. |
+| [AWS IP ranges used by Roblox](aws-roblox-server-ip-addresses.txt) | AWS entries associated with Roblox server use, including the Ashburn ICMP latency probe. |
 | [Combined legacy list](robloxserveriplist.txt) | Both datasets in the original path for existing links and workflows. |
-
-I am confident that at least 95% of the listed IP ranges are correct. This is my estimate based on testing and observations, not a percentage from an independent statistical audit.
 
 ## Roblox-owned IP addresses
 
-The following 34 Roblox-registered entries mirror the canonical [roblox-owned-ip-addresses.txt](https://github.com/Maneetbal/roblox-server-locations/blob/main/roblox-owned-ip-addresses.txt "roblox-owned-ip-addresses.txt") file. City labels are community location observations; the 107.180.197.0/24 entry is registered to Roblox and hosted on AWS.
+The following list summarizes Roblox-registered entries. City labels are community location observations; the 107.180.197.0/24 entry is registered to Roblox and hosted on AWS.
 
 ### United States
 #### Ashburn, VA
@@ -41,42 +39,52 @@ The following 34 Roblox-registered entries mirror the canonical [roblox-owned-ip
 - 128.116.127.0/24
 #### New York City, NY
 - 128.116.32.0/24
-#### San Jose, CA
+- 128.116.30.3 (observed endpoint; location based on network testing)
+#### San Jose, CA (Reserved)
 - 128.116.117.0/24
 - 128.116.67.0/24
 - 209.206.42.0/24
 - 209.206.43.0/24
 #### Seattle, WA
 - 128.116.115.0/24 (.33)
+
 ### Australia
 #### Sydney, AU
 - 128.116.51.0/24
+
 ### Brazil
 #### Sao Paulo, BR
 - 128.116.86.0/24
+
 ### France
 #### Paris, FR
 - 128.116.13.0/24
+
 ### Germany
 #### Frankfurt, DE
 - 128.116.5.0/24
 - 128.116.44.0/24
+
 ### India
 #### Mumbai, IN
 - 128.116.47.0/24
+
 ### Japan
 #### Tokyo, JP
 - 128.116.55.0/24
 - 128.116.120.0/24
+
 ### Netherlands
 #### Amsterdam, NL
 - 128.116.21.0/24
+
 ### Singapore
 #### Singapore, SG
 - 128.116.46.0/24
 - 128.116.50.0/24
 - 128.116.54.0/24
 - 128.116.97.0/24
+
 ### United Kingdom
 #### London, UK
 - 128.116.31.0/24
@@ -86,6 +94,10 @@ The following 34 Roblox-registered entries mirror the canonical [roblox-owned-ip
 GlassWire observations of game instances commonly show Roblox game-server connections using addresses ending in .33. The HTTPS website commonly uses an address ending in .3. For example, 128.116.115.33 is a game-server address and 128.116.115.3 is a website address; they are in the same location and have shown the same latency in my testing. The .33 game-instance addresses do not respond to ICMP. This .3/.33 pattern applies to some addresses, not all Roblox IPs.
 
 Address 128.116.115.4 also responds to ICMP, but I have not identified which service it represents. The separate 3.80.0.0/32 entry is an AWS ICMP latency probe and intentionally overlaps the broader 3.80.0.0/12 prefix.
+
+## Reserved capacity and AWS
+
+The San Jose, CA and Boardman, OR entries are marked **Reserved** to indicate they are treated as reserve capacity in this community-maintained list. AWS-associated Roblox server entries are considered reserved capacity: they may be used when demand is high, a primary region is full, or service in another region is unavailable or degraded. This describes the maintainer's current understanding based on observations, not a guarantee of Roblox's internal deployment policy.
 
 ## Additional network observations
 
@@ -109,7 +121,7 @@ These additional subnets are documented for future investigation only. Their pre
 
 ## Ownership and locations
 
-“Roblox-registered” describes the network registrant shown in public Internet registry records. The Roblox-registered file includes 107.180.197.0/24, which is registered to Roblox and hosted on AWS; it is grouped by registrant. The AWS file contains the other AWS ranges associated with Roblox server use. AWS use of these entries is maintainer-confirmed. In my observations, Roblox AWS servers are uncommon and appear mostly when a region is full or more capacity is needed.
+“Roblox-registered” describes the network registrant shown in public Internet registry records. The Roblox-registered file includes 107.180.197.0/24, which is registered to Roblox and hosted on AWS; it is grouped by registrant. The AWS file contains the other AWS ranges associated with Roblox server use. AWS use of these entries is maintainer-confirmed.
 
 The country and city groupings describe observed or estimated network locations, not verified physical data-center addresses. AWS public IP ranges and its geo-IP feed help identify network assignment and location hints. IP assignments and routing can change, and this list may not include every Roblox server IP.
 
