@@ -1,6 +1,6 @@
 Roblox-Registered Roblox Server IP Addresses
 ==============================================
-Last updated: 2026-10-22
+Last updated: 2026-10-23
 This list groups the active dataset's Roblox-registered ranges. The 107.180.197.0/24 block is registered to Roblox and is hosted on AWS; it remains here by registrant. City labels are estimates based on the existing community dataset.
 
 United States
@@ -27,7 +27,8 @@ United States
   - 128.116.127.0/24
 - New York City, NY
   - 128.116.32.0/24
-- San Jose, CA
+  - 128.116.30.3 (observed endpoint; location based on network testing)
+- San Jose, CA (Reserved)
   - 128.116.117.0/24
   - 128.116.67.0/24
   - 209.206.42.0/24
