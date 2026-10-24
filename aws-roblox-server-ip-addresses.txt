@@ -1,6 +1,8 @@
 AWS IP Ranges Associated with Roblox Servers
 =============================================
 Last updated: 2026-10-22
+
+Note: AWS-associated Roblox server entries are treated as reserved capacity for periods of high demand, when a primary region is full, or when another region is unavailable or degraded. This is a community-maintainer interpretation based on observations, not a guarantee of Roblox's internal deployment policy.
 These existing AWS ranges are included as Roblox-used based on maintainer-confirmed use. Only regions already in the combined list are included. City labels are estimates; AWS geolocation does not establish the physical facility. The /32 ICMP probe intentionally overlaps 3.80.0.0/12 and is kept as a latency diagnostic.
 
 United States
@@ -524,7 +526,7 @@ United States
   - 216.198.252.0/22 (AWS)
   - 216.244.7.0/24 (AWS)
   - 216.244.40.0/21 (AWS)
-- Boardman, OR
+- Boardman, OR (Reserved)
   - 1.178.1.0/24 (AWS)
   - 1.178.9.0/24 (AWS)
   - 1.178.65.0/24 (AWS)
