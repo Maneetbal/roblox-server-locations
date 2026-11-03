@@ -10,7 +10,8 @@ Community-maintained reference for Roblox game server IP addresses, CIDR ranges,
 | --- | --- |
 | [roblox-ips.txt](https://github.com/Maneetbal/roblox-server-locations/blob/main/roblox-ips.txt "roblox-ips.txt") | Roblox-registered entries. |
 | [AWS IP ranges used by Roblox](aws-ips.txt) | AWS entries associated with Roblox server use, including the Ashburn ICMP latency probe. |
-| [Combined legacy list](all-ips.txt) | Both datasets in the original path for existing links and workflows. |
+| [Combined list](all-ips.txt) | Roblox-registered and AWS-associated entries in one file. |
+| [Verified game-instance IPs](verified-ips.txt) | Individual IPs with direct game-instance and location evidence notes. |
 
 ## Roblox-owned IP addresses
 
