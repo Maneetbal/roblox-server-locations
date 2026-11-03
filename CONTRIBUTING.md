@@ -1,10 +1,10 @@
-# Contributing
+# Contributing Roblox Server IPs and Location Evidence
 
-Thank you for helping improve this community-maintained Roblox server IP reference. Contributions should be reproducible, clearly sourced, and careful to distinguish direct observations from estimates.
+Help improve this community-maintained **Roblox server IP address and location database**. We welcome reproducible game-instance IP observations, Roblox server IP range corrections, city-level location research, and Globalping latency evidence. Contributions must be clearly sourced and must distinguish direct observations from estimates.
 
 This project is unofficial and is not affiliated with Roblox.
 
-## 1. Capture the game-instance address
+## 1. Capture a Roblox game-instance IP address
 
 1. Join a Roblox experience and wait for the game instance to connect.
 2. Focus the Roblox game window and press **Ctrl+Shift+F3**.
@@ -16,7 +16,7 @@ The diagnostic address is the primary evidence that an IP was used by a live gam
 
 <img width="671" height="296" alt="Roblox Ctrl+Shift+F3 diagnostic showing a datacenter IPv4 address" src="https://github.com/user-attachments/assets/7bd9fc48-1169-484a-a1a6-01e825cb8f1c" />
 
-## 2. Research the reported location
+## 2. Research the Roblox server IP location
 
 1. Look up the exact game-instance IP on [iplocation.net](https://www.iplocation.net/).
 2. Review **Compare Results by Provider**.
@@ -35,7 +35,7 @@ Geolocation results are supporting evidence only. Provider agreement does not pr
 
 <img width="672" height="894" alt="Example iplocation.net results showing San Mateo as a reported location" src="https://github.com/user-attachments/assets/ac24ba6c-144e-42ec-8c71-123809fb80b6" />
 
-## 3. Run latency measurements
+## 3. Measure Roblox server IP latency with Globalping
 
 Use [Globalping](https://globalping.io/) to run ICMP tests from probes in the locations reported by the geolocation providers.
 
