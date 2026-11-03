@@ -8,9 +8,9 @@ Community-maintained reference for Roblox game server IP addresses, CIDR ranges,
 
 | Dataset | Contents |
 | --- | --- |
-| [roblox-owned-ip-addresses.txt](https://github.com/Maneetbal/roblox-server-locations/blob/main/roblox-owned-ip-addresses.txt "roblox-owned-ip-addresses.txt") | Roblox-registered entries. |
-| [AWS IP ranges used by Roblox](aws-roblox-server-ip-addresses.txt) | AWS entries associated with Roblox server use, including the Ashburn ICMP latency probe. |
-| [Combined legacy list](robloxserveriplist.txt) | Both datasets in the original path for existing links and workflows. |
+| [roblox-ips.txt](https://github.com/Maneetbal/roblox-server-locations/blob/main/roblox-ips.txt "roblox-ips.txt") | Roblox-registered entries. |
+| [AWS IP ranges used by Roblox](aws-ips.txt) | AWS entries associated with Roblox server use, including the Ashburn ICMP latency probe. |
+| [Combined legacy list](all-ips.txt) | Both datasets in the original path for existing links and workflows. |
 
 ## Roblox-owned IP addresses
 
@@ -89,6 +89,23 @@ The following list summarizes Roblox-registered entries. City labels are communi
 #### London, UK
 - 128.116.31.0/24
 
+## Verified game-instance observations
+
+See [verified-ips.txt](verified-ips.txt) for individual endpoints with recorded evidence. The list distinguishes direct game-instance evidence from location corroboration; a nearby or sibling IP responding to ping does not, by itself, prove that another address is a Roblox game server.
+
+For a live game-instance check, press **Ctrl+Shift+F3 while focused on the Roblox game instance** and look for a line in this format:
+
+`Datacenter fetched IPV4, 128.116.115.33`
+
+The Ctrl+Shift+F3 datacenter-fetched IPv4 result is the preferred source for identifying the game instance. GlassWire is useful as an independent cross-check by confirming that the Roblox Player process connects to the same remote IP. When both agree, record both sources. Do not treat a website connection, an unrelated Roblox process, or an IP merely sharing a subnet as direct game-instance proof.
+
+### Location and latency cross-check
+
+1. Open [iplocation.net](https://www.iplocation.net/) for the exact game-instance IP.
+2. Review the **Compare Results by Provider** section. Record every distinct city/region shown and the providers that report it. Provider agreement is useful corroboration, not proof of a physical data-center address.
+3. For each distinct location shown, run a ping to the exact IP from a Globalping probe in that location using [Globalping](https://globalping.io/). Record probe location, ASN/provider, packet count, loss, and min/average/max RTT. Use multiple probes where practical.
+4. Prefer pings to the exact game-instance IP. If it does not answer ICMP, a nearby or related endpoint can only be recorded as indirect location evidence; identify that endpoint separately and never claim it proves the game IP's reachability.
+
 ## Roblox IP observations
 
 GlassWire observations of game instances commonly show Roblox game-server connections using addresses ending in .33. The HTTPS website commonly uses an address ending in .3. For example, 128.116.115.33 is a game-server address and 128.116.115.3 is a website address; they are in the same location and have shown the same latency in my testing. The .33 game-instance addresses do not respond to ICMP. This .3/.33 pattern applies to some addresses, not all Roblox IPs.
@@ -133,6 +150,6 @@ The country and city groupings describe observed or estimated network locations,
 - [AWS public IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json)
 - [AWS geo-IP feed](https://ip-ranges.amazonaws.com/geo-ip-feed.csv)
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how entries are checked and the three lists kept synchronized. [CHANGELOG.md](CHANGELOG.md) records significant dataset changes.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how entries are checked, verified, and kept synchronized. [CHANGELOG.md](CHANGELOG.md) records significant dataset changes.
 
 Search terms: Roblox server IP addresses, Roblox server locations, Roblox game server IP list, Roblox data center locations, Roblox AWS server IP ranges, Roblox CIDR list.
