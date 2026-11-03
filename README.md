@@ -1,26 +1,28 @@
-# Roblox Server IP Addresses and Locations
+# Roblox Server IP Addresses, Locations, and Datacenter Reference
 
-A community-maintained reference of IP ranges associated with Roblox game servers, including network registration, observed locations, and game-instance evidence.
+Find **Roblox game server IP ranges**, estimated **Roblox server locations**, and documented **game-instance IP observations** in one community-maintained reference. The project organizes known Roblox-associated IPv4 ranges by country and city, separates Roblox-registered networks from AWS-associated ranges, and provides evidence notes to help readers judge location reliability.
 
-> **Disclaimer:** This project is unofficial and is not affiliated with or endorsed by Roblox. Locations are estimates, not confirmed physical data-center addresses.
+> **Unofficial community project:** This repository is not affiliated with, endorsed by, or maintained by Roblox. City labels are estimates based on available evidence; they are not confirmation of a physical Roblox data center.
 
-## Datasets
+## Quick links: Roblox server IP lists
 
-| File | Description |
-| --- | --- |
-| [`roblox-ips.txt`](roblox-ips.txt) | IP ranges registered to Roblox, grouped by estimated location. |
-| [`aws-ips.txt`](aws-ips.txt) | AWS IP ranges associated with Roblox server use. |
-| [`all-ips.txt`](all-ips.txt) | Combined list of Roblox-registered and AWS-associated ranges. |
-| [`roblox-verified-ips.txt`](roblox-verified-ips.txt) | Game-instance observations with supporting evidence and confidence ratings. |
+| File | What it contains | Use it for |
+| --- | --- | --- |
+| [`roblox-verified-ips.txt`](roblox-verified-ips.txt) | Game-instance IP observations, estimated locations, ICMP endpoint notes, and location confidence | Best starting point when looking for documented Roblox game-server IPs and location evidence |
+| [`roblox-ips.txt`](roblox-ips.txt) | IPv4 ranges registered to Roblox, grouped by estimated location | Finding Roblox-registered server IP ranges by city or region |
+| [`aws-ips.txt`](aws-ips.txt) | AWS-owned ranges associated with Roblox server use | Reviewing Roblox-associated Amazon Web Services IP ranges |
+| [`all-ips.txt`](all-ips.txt) | Combined Roblox-registered and AWS-associated IP range list | Searching the broadest consolidated list of Roblox-associated IPs |
 
-## Identifying a game instance
+**Looking for a specific city?** Open the relevant list and use your browser's Find feature (Ctrl+F) to search for a city, country, or IP prefix.
 
-The primary source for identifying an active game-instance address is Roblox's in-game performance diagnostic:
+## How to identify a Roblox game-server IP
 
-1. Join an experience and wait for the game instance to connect.
+The primary evidence for an IP used by a live Roblox game instance is Roblox's in-game performance diagnostic:
+
+1. Join a Roblox experience and wait for the game instance to connect.
 2. Focus the Roblox game window and press **Ctrl+Shift+F3**.
-3. Find the line beginning with `Datacenter fetched IPV4,`.
-4. Record the exact IPv4 address and retain a screenshot of the diagnostic.
+3. Find the diagnostic line beginning with `Datacenter fetched IPV4,`.
+4. Record the exact IPv4 address and keep a screenshot of the diagnostic.
 
 Example:
 
@@ -28,30 +30,49 @@ Example:
 Datacenter fetched IPV4, 128.116.115.33
 ```
 
-Do not treat an address as a confirmed game-instance IP solely because it belongs to a listed subnet or appears in a website connection.
+This is direct evidence that the address was reported by a game instance. A subnet match, registry record, geolocation result, or website connection alone does not prove that an IP hosted that game instance.
 
-## Location and latency checks
+## How Roblox server locations are researched
 
-Location data should be treated as corroborating evidence:
+Location labels are estimates supported by multiple types of evidence. No single lookup should be treated as definitive.
 
-- **IP location:** Check the exact address with [iplocation.net](https://www.iplocation.net/) and record the distinct results shown under **Compare Results by Provider**. Some providers may report **San Mateo, California**; Roblox does not have data centers in San Mateo, so this result can be safely disregarded or treated as if that provider returned no result. Do not use it as supporting location evidence.
-- **Latency:** Use [Globalping](https://globalping.io/) to test the exact address from probes in the reported locations. Record the measurement URL, probe location, network/ASN, packet loss, and RTT statistics. Akamai Connected Cloud probes on Globalping can be especially useful for these tests, but using an Akamai probe is optional; other suitable probes are acceptable.
-- **No ICMP response:** Some addresses do not respond to ping. Skip the ping test, record `ICMP=No response`, and flag the address for review. A timeout does not establish that an address is invalid.
-- **Related addresses:** If a nearby or related address is tested instead, identify it separately. Its response is indirect evidence and must not be presented as a test of the game-instance IP.
+- **IP geolocation databases:** Check the exact IP with [iplocation.net](https://www.iplocation.net/) and review **Compare Results by Provider**. Record provider disagreements rather than assuming every result is correct.
+- **San Mateo geolocation results:** Some providers may report San Mateo, California. Roblox does not have data centers in San Mateo; ignore that result or treat it as if the provider did not return a usable location. Do not use it as location evidence.
+- **Globalping latency tests:** Use [Globalping](https://globalping.io/) to test the exact target from probes in relevant locations. Record the measurement URL, probe city, network/ASN, packet loss, and RTT statistics. Akamai Connected Cloud probes can provide useful additional vantage points, but they are optional.
+- **ICMP limitations:** Some IPs do not answer ping. Record `ICMP=No response` when appropriate. A timeout does not prove that an IP is invalid or unused.
+- **Related endpoints:** If a nearby address is tested instead of the exact game-instance IP, label it separately. For example, an `.3` endpoint is not the same address as an instance ending in `.33`; its result is indirect evidence only.
 
-## Classification and limitations
+## Understanding the verified IP list
 
-- **Roblox-registered** means the network is registered to Roblox in public Internet registry records. It does not, by itself, prove that every address in the range hosts a game server.
-- **AWS-associated** entries are AWS ranges for which the project has evidence of Roblox server use. AWS ownership alone is not sufficient evidence.
-- City and region labels are estimates based on available registry, geolocation, and network measurements. They do not identify a physical facility.
-- IP assignments, routing, and service use can change. The lists may be incomplete or become outdated.
+The verified list distinguishes three separate details:
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the evidence requirements and submission process.
+- **Instance:** The address reported by Roblox's game diagnostic.
+- **ICMP:** The address used for a ping measurement. It may be a related endpoint rather than the instance address.
+- **Confidence:** The maintainer's assessment of how reliable the listed **location** is. It does not rate confidence in the ICMP endpoint or the instance IP observation, and it is not a statistical probability or guarantee.
+
+A location confidence rating should reflect the consistency and quality of the available evidence. Review the linked or submitted evidence before relying on a location label.
+
+## Network ownership and classification
+
+- **Roblox-registered ranges** are assigned to Roblox according to public Internet registry records. Registration does not prove that every IP in a range runs a Roblox game server.
+- **AWS-associated ranges** are owned by Amazon Web Services and included only where there is evidence connecting the range to Roblox server use. AWS ownership alone is not enough.
+- **Estimated city labels** are based on geolocation, registry information, and network measurements. They do not identify a building or physical data-center facility.
+
+IP assignments, routing, and service usage can change. Lists may be incomplete or become outdated; use the evidence and dates when evaluating results.
+
+## Contributing new Roblox server IP evidence
+
+Have a game-instance IP or better location evidence? Read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting. Contributions should include the exact diagnostic observation, geolocation provider results, and Globalping measurements where available.
 
 ## Reference sources
 
+- [Roblox](https://www.roblox.com/)
 - [ARIN RDAP](https://www.arin.net/)
 - [AWS public IP address ranges](https://ip-ranges.amazonaws.com/ip-ranges.json)
 - [AWS IP address geolocation feed](https://ip-ranges.amazonaws.com/geo-ip-feed.csv)
 - [iplocation.net](https://www.iplocation.net/)
 - [Globalping](https://globalping.io/)
+
+---
+
+*Search topics: Roblox server IP addresses, Roblox server IP list, Roblox game server IP lookup, Roblox datacenter locations, Roblox server locations by city, Roblox game-instance IPs, Roblox IPv4 ranges, Roblox AWS server IPs, and Roblox server location research.*
