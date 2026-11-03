@@ -12,19 +12,25 @@ These files are community-maintained and are not an official Roblox inventory. K
 1. Join a Roblox experience and wait until the game instance is connected.
 2. With the Roblox game window focused, press **Ctrl+Shift+F3**.
 3. Find the diagnostic line beginning with **`Datacenter fetched IPV4,`**. For example: **`Datacenter fetched IPV4, 128.116.115.33`**.
-4. Record the IPv4 address exactly as displayed, along with the date and the exact diagnostic text. This is the primary game-instance evidence.
+4. Take an image of the IPv4 address exactly as displayed, along with the date and the exact diagnostic text. This is the primary game-instance evidence.
 
-Do not substitute a website connection, a nearby address, or another address in the same subnet for the in-game diagnostic result.
+<img width="671" height="296" alt="image" src="https://github.com/user-attachments/assets/7bd9fc48-1169-484a-a1a6-01e825cb8f1c" />
 
 ## Verify the location
 
 1. Open [iplocation.net](https://www.iplocation.net/) and look up the exact IPv4 address.
-2. Inspect **Compare Results by Provider**. Record every distinct city/region shown and the providers reporting it, including providers that return no data. Provider agreement is useful corroboration, not proof of a physical data-center address.
-3. For each distinct location shown, use [Globalping](https://globalping.io/) to run an ICMP ping to the exact game-instance IP from a probe in that location. Record probe location, ASN/provider, packet loss, and min/average/max RTT.
-4. **If the exact IP does not respond to ICMP, skip the ping test for that IP.** Record `ICMP=No response` (or `ICMP=Skipped`) and flag it for maintainer verification. Do not substitute a different IP and present its response as if it came from the game-instance IP.
-5. If a related address is tested instead, record it separately as indirect evidence, for example `ICMP=.3` when the instance address is `.33`. A related address responding to ICMP does not prove that the instance IP responds or is physically located at that probe.
-6. Compare provider locations and network measurements. Preserve conflicting results and uncertainty rather than forcing a location.
+2. Inspect **Compare Results by Provider**. Record every distinct city/region shown and the providers reporting it, including providers that return no data. Provider agreement is useful corroboration, not proof of a physical data-center address. You also have to List the exact url used
 
+<img width="664" height="873" alt="image" src="https://github.com/user-attachments/assets/2930e495-3793-48ab-a277-f718da1a0ddf" /> 
+[url](https://www.iplocation.net/ip-lookup?query=128.116.115.33/)
+
+4. For each distinct location shown, use [Globalping](https://globalping.io/) to run an ICMP ping to the exact game-instance IP from a probe in that location. Record probe location, ASN/provider, packet loss, and min/average/max RTT. you could safely ignore outliers also list the url of the mesurement 
+
+<img width="1336" height="700" alt="image" src="https://github.com/user-attachments/assets/00d3b21a-f689-4d42-8526-79b5f98b7b20" />
+
+5. **If the exact IP does not respond to ICMP, skip the ping test for that IP.** Record `ICMP=None`
+6. If a related address is tested instead, record it separately as indirect evidence, for example `ICMP=.3` when the instance address is `.33`. A related address responding to ICMP does not prove that the instance IP responds or is physically located at that probe.
+7. Create an issue so that i can review it
 ## Example: Seattle
 
 ```text
@@ -39,7 +45,7 @@ For this entry, `Instance=.33` identifies the game-instance endpoint reported by
 ## Confidence percentages
 
 - Use a whole-number percentage from 0 to 100.
-- **100 is the highest confidence rating.** The Seattle entry above is assigned 100 as requested.
+- **100 is the highest confidence rating.** 
 - Confidence expresses how strongly the available evidence supports the classification/location judgment. **It is not an accuracy percentage, probability of being correct, or guarantee.** A contributor can be highly confident and still be wrong.
 - Confidence is a maintainer assessment. Record the evidence and date so others can independently review it.
 - A location estimate is not proof of a physical data-center address or a permanent IP assignment.
