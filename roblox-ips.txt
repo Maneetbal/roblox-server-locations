@@ -26,7 +26,7 @@ United States
   - 128.116.127.0/24
 - New York City, NY
   - 128.116.32.0/24
-  - 128.116.30.3 (observed endpoint; location based on network testing)
+  - 128.116.30.3
 - San Jose, CA (Reserved)
   - 128.116.117.0/24
   - 128.116.67.0/24
