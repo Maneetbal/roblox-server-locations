@@ -1,8 +1,6 @@
 Roblox Server IP List
 =====================
-Last updated: 2026-10-22
-
-Note: AWS-associated Roblox server entries are treated as reserved capacity for periods of high demand, when a primary region is full, or when another region is unavailable or degraded. This is a community-maintainer interpretation based on observations, not a guarantee of Roblox's internal deployment policy.
+Last updated: 2026-11-23
 
 United States
 -------------
