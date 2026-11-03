@@ -27,6 +27,6 @@
 ## 2026-11-02 (follow-up)
 
 - Renamed `verified-ips.txt` to `roblox-verified-ips.txt`.
-- Removed GlassWire references and methods from project documentation; Ctrl+Shift+F3 is the primary game-instance evidence source.
+- Removed third-party process-monitoring cross-checks; Ctrl+Shift+F3 is the primary game-instance evidence source.
 - Added confidence scores with an explicit warning that confidence is not guaranteed accuracy.
 - Clarified that non-responding ICMP targets should be skipped and reported for maintainer verification.
