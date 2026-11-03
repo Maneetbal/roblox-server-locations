@@ -1,37 +1,69 @@
-# Maintaining the Roblox server IP lists
+# Contributing
 
-These files are community-maintained and are not an official Roblox inventory. Keep the three datasets, the verification ledger, and the README synchronized:
+Thank you for helping improve this community-maintained Roblox server IP reference. Contributions should be reproducible, clearly sourced, and careful to distinguish direct observations from estimates.
 
-- `roblox-ips.txt` — Roblox-registered entries.
-- `aws-ips.txt` — AWS entries associated with Roblox use.
-- `all-ips.txt` — combined compatibility list.
-- `roblox-verified-ips.txt` — game-instance IPs grouped by location, with confidence and ICMP/instance evidence.
+This project is unofficial and is not affiliated with Roblox.
 
-## Identify the game-instance IP
+## 1. Capture the game-instance address
 
-1. Join a Roblox experience and wait until the game instance is connected.
-2. With the Roblox game window focused, press **Ctrl+Shift+F3**.
-3. Find the diagnostic line beginning with **`Datacenter fetched IPV4,`**. For example: **`Datacenter fetched IPV4, 128.116.115.33`**.
-4. Take an image of the IPv4 address exactly as displayed, along with the date and the exact diagnostic text. This is the primary game-instance evidence.
+1. Join a Roblox experience and wait for the game instance to connect.
+2. Focus the Roblox game window and press **Ctrl+Shift+F3**.
+3. Locate the diagnostic line beginning with `Datacenter fetched IPV4,`.
+4. Record the complete line, the IPv4 address, and the observation date.
+5. Include a screenshot showing the diagnostic output.
 
-<img width="671" height="296" alt="image" src="https://github.com/user-attachments/assets/7bd9fc48-1169-484a-a1a6-01e825cb8f1c" />
+The diagnostic address is the primary evidence that an IP was used by a live game instance.
 
-## Verify the location
+<img width="671" height="296" alt="Roblox Ctrl+Shift+F3 diagnostic showing a datacenter IPv4 address" src="https://github.com/user-attachments/assets/7bd9fc48-1169-484a-a1a6-01e825cb8f1c" />
 
-1. Open [iplocation.net](https://www.iplocation.net/) and look up the exact IPv4 address.
-2. Inspect **Compare Results by Provider**. Record every distinct city/region shown and the providers reporting it, including providers that return no data. Provider agreement is useful corroboration, not proof of a physical data-center address. You also have to List the exact url used
+## 2. Research the reported location
 
-<img width="664" height="873" alt="image" src="https://github.com/user-attachments/assets/2930e495-3793-48ab-a277-f718da1a0ddf" /> 
-[url](https://www.iplocation.net/ip-lookup?query=128.116.115.33/)
+1. Look up the exact game-instance IP on [iplocation.net](https://www.iplocation.net/).
+2. Review **Compare Results by Provider**.
+3. Record each distinct location and the provider reporting it. Note providers that return no result.
+4. Include the exact lookup URL in the evidence submitted for review.
 
-4. For each distinct location shown, use [Globalping](https://globalping.io/) to run an ICMP ping to the exact game-instance IP from a probe in that location. Record probe location, ASN/provider, packet loss, and min/average/max RTT. you could safely ignore outliers also list the url of the mesurement 
+Example lookup:
 
-<img width="1336" height="700" alt="image" src="https://github.com/user-attachments/assets/00d3b21a-f689-4d42-8526-79b5f98b7b20" />
+[https://www.iplocation.net/ip-lookup?query=128.116.115.33](https://www.iplocation.net/ip-lookup?query=128.116.115.33)
 
-5. **If the exact IP does not respond to ICMP, skip the ping test for that IP.** Record `ICMP=None`
-6. If a related address is tested instead, record it separately as indirect evidence, for example `ICMP=.3` when the instance address is `.33`. A related address responding to ICMP does not prove that the instance IP responds or is physically located at that probe.
-7. Create an issue so that i can review it
-## Example: Seattle
+<img width="664" height="873" alt="Example IP geolocation provider results" src="https://github.com/user-attachments/assets/2930e495-3793-48ab-a277-f718da1a0ddf" />
+
+Geolocation results are supporting evidence only. Provider agreement does not prove the physical location of a data center.
+
+## 3. Run latency measurements
+
+Use [Globalping](https://globalping.io/) to run ICMP tests from probes in the locations reported by the geolocation providers.
+
+Record:
+
+- The exact target IP address.
+- The Globalping measurement URL.
+- Probe location and network/ASN.
+- Packet loss and minimum, average, and maximum RTT.
+- Any unusual results or excluded outliers, with the reason for exclusion.
+
+<img width="1336" height="700" alt="Example Globalping latency measurement" src="https://github.com/user-attachments/assets/00d3b21a-f689-4d42-8526-79b5f98b7b20" />
+
+If the exact game-instance IP does not respond to ICMP, skip the ping test and record `ICMP=No response`. Do not interpret a timeout as proof that the address is invalid.
+
+If you test a related address instead, identify it as a separate endpoint. For example, `ICMP=.3` may describe a related `.3` address when the game-instance address ends in `.33`. This is indirect location evidence, not a ping result for the instance IP.
+
+## 4. Submit evidence for review
+
+Open a [GitHub issue](https://github.com/Maneetbal/roblox-server-locations/issues) before proposing a new verified entry. Include:
+
+- Exact Ctrl+Shift+F3 diagnostic line and observation date.
+- Screenshot of the diagnostic output.
+- Exact iplocation.net lookup URL and provider results.
+- Globalping measurement URL(s), or a note explaining why ICMP testing was skipped.
+- Proposed country, city/region, and CIDR range, if known.
+
+Do not add an observation to the verified list until it has been reviewed.
+
+## Entry format
+
+The verification ledger uses this format:
 
 ```text
 United States
@@ -40,30 +72,32 @@ United States
   - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
 ```
 
-For this entry, `Instance=.33` identifies the game-instance endpoint reported by the in-game diagnostic. `ICMP=.3` identifies the separate related endpoint used for the Seattle ping measurement; it is not an exact-IP ping of `.33`.
+- `Instance=.33` identifies the game-instance address reported by Roblox.
+- `ICMP=.3` identifies a separate related address used for the ping measurement. It does not mean the instance address responded to ICMP.
+- Use `ICMP=No response` when the exact address does not answer ICMP and no related endpoint is being reported.
 
-## Confidence percentages
+## Confidence ratings
 
-- Use a whole-number percentage from 0 to 100.
-- **100 is the highest confidence rating.** 
-- Confidence expresses how strongly the available evidence supports the classification/location judgment. **It is not an accuracy percentage, probability of being correct, or guarantee.** A contributor can be highly confident and still be wrong.
-- Confidence is a maintainer assessment. Record the evidence and date so others can independently review it.
-- A location estimate is not proof of a physical data-center address or a permanent IP assignment.
+Use a whole-number rating from 0 to 100. Confidence is a maintainer's assessment of the strength and consistency of the available evidence.
 
-## Evidence and classification
+A confidence rating is **not** an accuracy percentage, probability, or guarantee. Record the evidence so other contributors can independently assess the conclusion.
 
-1. Use the Ctrl+Shift+F3 `Datacenter fetched IPV4` output as the primary evidence that an IP belongs to a live game instance.
-2. Check the network registrant with the relevant Regional Internet Registry (RIR) RDAP service. Put Roblox-registered networks in `roblox-ips.txt`. If a Roblox-registered block is hosted on AWS, note that fact; classify it by registrant to avoid duplicate listing.
-3. For AWS-owned addresses, compare the prefix with [AWS public IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json) and use the [AWS geo-IP feed](https://ip-ranges.amazonaws.com/geo-ip-feed.csv) as a location hint.
-4. Treat city names as estimates. Geo-IP data, registry records, and latency measurements do not identify a physical facility.
-5. Keep intentional overlaps when they serve a distinct purpose. For example, `3.80.0.0/32` is an ICMP test probe within `3.80.0.0/12`; it is not a duplicate.
-6. Do not add every AWS region automatically. Add only regions with evidence of Roblox use and maintainer approval.
+## Network classification
 
-## Updates
+- Put ranges registered to Roblox in `roblox-ips.txt`. Verify registration using the relevant Regional Internet Registry (RIR) RDAP service.
+- If a Roblox-registered range is hosted on AWS, classify it by registrant and note its AWS hosting where relevant.
+- For AWS-owned ranges, compare the prefix with the [AWS public IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json). The [AWS geolocation feed](https://ip-ranges.amazonaws.com/geo-ip-feed.csv) may be used as a location reference.
+- Add AWS ranges only when there is evidence of Roblox use; do not include every AWS region automatically.
+- Preserve intentional overlaps when they serve different purposes. For example, `3.80.0.0/32` is a latency-test endpoint within `3.80.0.0/12`, not an accidental duplicate.
 
-- Recheck records and observed endpoints periodically; note the source and date.
-- If an IP does not answer ICMP, skip that ping test and report the IP for maintainer verification; do not assume it is invalid.
-- Remove an entry only when there is sufficient evidence it is no longer relevant.
-- Deduplicate exact repeated CIDRs when they refer to the same listed range. If locations conflict, retain the best-supported label and record the basis.
-- When the data changes, update all three list files, the verification ledger, the README, their dates.
-- Preserve `all-ips.txt` as the combined compatibility list.
+## Maintaining the lists
+
+When an approved change is made:
+
+1. Update the relevant source list and `all-ips.txt`.
+2. Update `roblox-verified-ips.txt` when verified game-instance evidence changes.
+3. Keep the README and file dates consistent with the data.
+4. Remove duplicates only when they represent the same network entry and purpose.
+5. Reassess entries when new evidence conflicts with the existing location or classification.
+
+Keep changes focused and include the supporting evidence in the issue or commit description.
