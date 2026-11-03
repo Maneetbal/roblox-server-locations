@@ -53,8 +53,6 @@ Akamai Connected Cloud probes (for example, AS63949) can be particularly useful 
 
 If the exact game-instance IP does not respond to ICMP, skip the ping test and record `ICMP=No response`. Do not interpret a timeout as proof that the address is invalid.
 
-For example, an Akamai Connected Cloud probe in Los Angeles (AS63949) reached the related endpoint `128.116.116.3` with 0% packet loss and an average RTT of 0.477 ms. This is useful corroborating evidence for the related endpoint's location, but it is not a direct ping of the game-instance address `128.116.116.33`.
-
 If you test a related address instead, identify it as a separate endpoint. For example, `ICMP=.3` may describe a related `.3` address when the game-instance address ends in `.33`. This is indirect location evidence, not a ping result for the instance IP.
 
 ## 4. Submit evidence for review
