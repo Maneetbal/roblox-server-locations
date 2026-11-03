@@ -2,7 +2,7 @@
 
 Community-maintained reference for Roblox game server IP addresses, CIDR ranges, and associated locations. This project is not an official Roblox resource.
 
-**Status: Up to date.** The active ranges are based on testing and network observations, including Roblox game-instance connections observed with GlassWire.
+**Status: Up to date.** The active ranges are based on testing and network observations, including Roblox game-instance addresses reported by the in-game diagnostics.
 
 ## Current lists
 
@@ -11,7 +11,7 @@ Community-maintained reference for Roblox game server IP addresses, CIDR ranges,
 | [roblox-ips.txt](https://github.com/Maneetbal/roblox-server-locations/blob/main/roblox-ips.txt "roblox-ips.txt") | Roblox-registered entries. |
 | [AWS IP ranges used by Roblox](aws-ips.txt) | AWS entries associated with Roblox server use, including the Ashburn ICMP latency probe. |
 | [Combined list](all-ips.txt) | Roblox-registered and AWS-associated entries in one file. |
-| [Verified game-instance IPs](verified-ips.txt) | Individual IPs with direct game-instance and location evidence notes. |
+| [Verified game-instance IPs](roblox-verified-ips.txt) | Individual IPs with direct game-instance and location evidence notes. |
 
 ## Roblox-owned IP addresses
 
@@ -98,7 +98,7 @@ For a live game-instance check, press **Ctrl+Shift+F3 while focused on the Roblo
 
 `Datacenter fetched IPV4, 128.116.115.33`
 
-The Ctrl+Shift+F3 datacenter-fetched IPv4 result is the preferred source for identifying the game instance. GlassWire is useful as an independent cross-check by confirming that the Roblox Player process connects to the same remote IP. When both agree, record both sources. Do not treat a website connection, an unrelated Roblox process, or an IP merely sharing a subnet as direct game-instance proof.
+The Ctrl+Shift+F3 datacenter-fetched IPv4 result is the primary source for identifying the game instance. Record the exact diagnostic line and IP. Do not treat a website connection or an IP merely sharing a subnet as direct game-instance proof.
 
 ### Location and latency cross-check
 
@@ -109,7 +109,7 @@ The Ctrl+Shift+F3 datacenter-fetched IPv4 result is the preferred source for ide
 
 ## Roblox IP observations
 
-GlassWire observations of game instances commonly show Roblox game-server connections using addresses ending in .33. The HTTPS website commonly uses an address ending in .3. For example, 128.116.115.33 is a game-server address and 128.116.115.3 is a website address; they are in the same location and have shown the same latency in my testing. The .33 game-instance addresses do not respond to ICMP. This .3/.33 pattern applies to some addresses, not all Roblox IPs.
+Ctrl+Shift+F3 game-instance diagnostics commonly report Roblox game-server connections using addresses ending in .33. The HTTPS website commonly uses an address ending in .3. For example, 128.116.115.33 is a game-server address and 128.116.115.3 is a website address; they are in the same location and have shown the same latency in my testing. The .33 game-instance addresses do not respond to ICMP. This .3/.33 pattern applies to some addresses, not all Roblox IPs.
 
 Address 128.116.115.4 also responds to ICMP, but I have not identified which service it represents. The separate 3.80.0.0/32 entry is an AWS ICMP latency probe and intentionally overlaps the broader 3.80.0.0/12 prefix.
 
@@ -123,7 +123,7 @@ The following notes are README references only; they do not add or change entrie
 
 ### Rare Roblox game-instance observations: 209.206.40.0/21
 
-ARIN registers 209.206.40.0/21 to Roblox. In my GlassWire observations, Roblox use of this broader subnet has been rare: I have seen about four game instances so far, all located in San Jose. That is the only location I have observed to date, not evidence that the entire subnet is reserved to San Jose; it may be used in other locations. The existing narrower 209.206.42.0/24 and 209.206.43.0/24 entries remain as listed. [ARIN RDAP record](https://rdap.arin.net/registry/ip/209.206.40.0)
+ARIN registers 209.206.40.0/21 to Roblox. In my game-instance diagnostic observations, Roblox use of this broader subnet has been rare: I have seen about four game instances so far, all located in San Jose. That is the only location I have observed to date, not evidence that the entire subnet is reserved to San Jose; it may be used in other locations. The existing narrower 209.206.42.0/24 and 209.206.43.0/24 entries remain as listed. [ARIN RDAP record](https://rdap.arin.net/registry/ip/209.206.40.0)
 
 ### Roblox-registered ranges not yet added to active lists
 
