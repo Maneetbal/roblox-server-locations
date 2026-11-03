@@ -34,8 +34,8 @@ Do not treat an address as a confirmed game-instance IP solely because it belong
 
 Location data should be treated as corroborating evidence:
 
-- **IP location:** Check the exact address with [iplocation.net](https://www.iplocation.net/) and record the distinct results shown under **Compare Results by Provider**.
-- **Latency:** Use [Globalping](https://globalping.io/) to test the exact address from probes in the reported locations. Record the measurement URL, probe location, network/ASN, packet loss, and RTT statistics.
+- **IP location:** Check the exact address with [iplocation.net](https://www.iplocation.net/) and record the distinct results shown under **Compare Results by Provider**. Some providers may report **San Mateo, California**; Roblox does not have data centers in San Mateo, so this result can be safely disregarded or treated as if that provider returned no result. Do not use it as supporting location evidence.
+- **Latency:** Use [Globalping](https://globalping.io/) to test the exact address from probes in the reported locations. Record the measurement URL, probe location, network/ASN, packet loss, and RTT statistics. Akamai Connected Cloud probes on Globalping can be especially useful for these tests, but using an Akamai probe is optional; other suitable probes are acceptable.
 - **No ICMP response:** Some addresses do not respond to ping. Skip the ping test, record `ICMP=No response`, and flag the address for review. A timeout does not establish that an address is invalid.
 - **Related addresses:** If a nearby or related address is tested instead, identify it separately. Its response is indirect evidence and must not be presented as a test of the game-instance IP.
 
