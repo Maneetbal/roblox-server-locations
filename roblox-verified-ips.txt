@@ -9,3 +9,6 @@ United States
 
 - Los Angeles, CA
   - 128.116.116.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
+
+- Chicago, IL
+  - 128.116.48.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
