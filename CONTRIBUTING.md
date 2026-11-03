@@ -31,6 +31,10 @@ Example lookup:
 
 Geolocation results are supporting evidence only. Provider agreement does not prove the physical location of a data center.
 
+**San Mateo result caveat:** Some geolocation providers may list San Mateo, California. Roblox does not have data centers in San Mateo, so you can safely ignore that provider result or treat it as if the provider did not respond. Do not use a San Mateo result as evidence for the proposed location.
+
+<img width="672" height="894" alt="Example iplocation.net results showing San Mateo as a reported location" src="https://github.com/user-attachments/assets/ac24ba6c-144e-42ec-8c71-123809fb80b6" />
+
 ## 3. Run latency measurements
 
 Use [Globalping](https://globalping.io/) to run ICMP tests from probes in the locations reported by the geolocation providers.
@@ -43,9 +47,13 @@ Record:
 - Packet loss and minimum, average, and maximum RTT.
 - Any unusual results or excluded outliers, with the reason for exclusion.
 
+Akamai Connected Cloud probes (for example, AS63949) can be particularly useful on Globalping because they provide additional network vantage points. They are recommended when available, but they are not required; use other suitable probes as well.
+
 <img width="1336" height="700" alt="Example Globalping latency measurement" src="https://github.com/user-attachments/assets/00d3b21a-f689-4d42-8526-79b5f98b7b20" />
 
 If the exact game-instance IP does not respond to ICMP, skip the ping test and record `ICMP=No response`. Do not interpret a timeout as proof that the address is invalid.
+
+For example, an Akamai Connected Cloud probe in Los Angeles (AS63949) reached the related endpoint `128.116.116.3` with 0% packet loss and an average RTT of 0.477 ms. This is useful corroborating evidence for the related endpoint's location, but it is not a direct ping of the game-instance address `128.116.116.33`.
 
 If you test a related address instead, identify it as a separate endpoint. For example, `ICMP=.3` may describe a related `.3` address when the game-instance address ends in `.33`. This is indirect location evidence, not a ping result for the instance IP.
 
@@ -70,6 +78,8 @@ United States
 -------------
 - Seattle, WA
   - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
+- Los Angeles, CA
+  - 128.116.116.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
 ```
 
 - `Instance=.33` identifies the game-instance address reported by Roblox.
