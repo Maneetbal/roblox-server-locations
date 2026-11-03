@@ -13,4 +13,4 @@ United States
 - Chicago, IL
   - 128.116.48.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
 
-Confidence refers to how reliable the listed **location** is. It does not indicate confidence in the ICMP endpoint or the game-instance IP observation.
+Confidence refers to how reliable the listed location is. It does not indicate confidence in the ICMP endpoint or the game-instance IP observation.
