@@ -1,25 +1,9 @@
-# Roblox verified game-instance IP addresses
-
-This file uses the same country/city grouping style as `roblox-ips.txt`. Each entry records a network/range, a maintainer-assigned confidence score, an ICMP test endpoint (if one responds), and an instance IP reported by Roblox's in-game diagnostics.
-
-Confidence is a subjective measure of how strongly the available evidence supports the entry. It is **not an accuracy percentage or a guarantee**: a 100 confidence score is the highest rating, but a highly confident assessment can still be wrong.
+Roblox Verified Game-Instance IP Addresses
+===========================================
+Last updated: 2026-11-23
 
 United States
 -------------
 - Seattle, WA
   - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
 
-## Field meanings
-
-- `Confidence=100`: highest maintainer confidence rating; it does not mean 100% guaranteed accuracy.
-- `ICMP=.3`: the related `.3` address used for the ICMP latency test. This is not the instance address.
-- `Instance=.33`: the game-instance IP reported by the Roblox Ctrl+Shift+F3 diagnostic.
-
-## Verification notes
-
-- Identify each game-instance IP using **Ctrl+Shift+F3** in the Roblox game window. Record the exact `Datacenter fetched IPV4,` line.
-- Check the exact IP with iplocation.net and record every distinct location and provider under **Compare Results by Provider**.
-- Run Globalping ICMP tests from each distinct reported location when the exact IP responds.
-- Some IPs may not respond to ICMP. This is uncommon but possible. If an IP does not respond, skip that ping test, record `ICMP=No response`, and flag it for maintainer verification. Do not treat the lack of an ICMP reply as proof that the IP is invalid.
-- If a different, related IP is pinged, record that address explicitly as the ICMP endpoint. Never imply that its result is a ping result for the instance IP.
-- Confidence describes strength of evidence, not guaranteed correctness or physical data-center accuracy.
