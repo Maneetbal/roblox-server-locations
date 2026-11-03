@@ -58,6 +58,6 @@ For this entry, `Instance=.33` identifies the game-instance endpoint reported by
 - Recheck records and observed endpoints periodically; note the source and date.
 - If an IP does not answer ICMP, skip that ping test and report the IP for maintainer verification; do not assume it is invalid.
 - Remove an entry only when there is sufficient evidence it is no longer relevant.
-- Deduplicate exact repeated CIDRs when they refer to the same listed range. If locations conflict, retain the best-supported label and record the basis in the changelog.
-- When the data changes, update all three list files, the verification ledger, the README, their dates, and `CHANGELOG.md`.
+- Deduplicate exact repeated CIDRs when they refer to the same listed range. If locations conflict, retain the best-supported label and record the basis.
+- When the data changes, update all three list files, the verification ledger, the README, their dates.
 - Preserve `all-ips.txt` as the combined compatibility list.
