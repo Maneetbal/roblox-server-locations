@@ -92,7 +92,7 @@ The following list summarizes Roblox-registered entries. City labels are communi
 
 ## Verified game-instance observations
 
-See [verified-ips.txt](verified-ips.txt) for individual endpoints with recorded evidence. The list distinguishes direct game-instance evidence from location corroboration; a nearby or sibling IP responding to ping does not, by itself, prove that another address is a Roblox game server.
+See [roblox-verified-ips.txt](roblox-verified-ips.txt) for individual endpoints with recorded evidence. The list distinguishes direct game-instance evidence from location corroboration; a nearby or sibling IP responding to ping does not, by itself, prove that another address is a Roblox game server.
 
 For a live game-instance check, press **Ctrl+Shift+F3 while focused on the Roblox game instance** and look for a line in this format:
 
@@ -105,7 +105,7 @@ The Ctrl+Shift+F3 datacenter-fetched IPv4 result is the primary source for ident
 1. Open [iplocation.net](https://www.iplocation.net/) for the exact game-instance IP.
 2. Review the **Compare Results by Provider** section. Record every distinct city/region shown and the providers that report it. Provider agreement is useful corroboration, not proof of a physical data-center address.
 3. For each distinct location shown, run a ping to the exact IP from a Globalping probe in that location using [Globalping](https://globalping.io/). Record probe location, ASN/provider, packet count, loss, and min/average/max RTT. Use multiple probes where practical.
-4. Prefer pings to the exact game-instance IP. If it does not answer ICMP, a nearby or related endpoint can only be recorded as indirect location evidence; identify that endpoint separately and never claim it proves the game IP's reachability.
+4. Prefer pings to the exact game-instance IP. If it does not answer ICMP, skip that ping, record `ICMP=No response`, and flag the IP for maintainer verification. Do not treat the lack of an ICMP reply as proof that the IP is invalid. A nearby or related endpoint can only be recorded as indirect location evidence; identify it separately and never claim it proves the game IP's reachability.
 
 ## Roblox IP observations
 
