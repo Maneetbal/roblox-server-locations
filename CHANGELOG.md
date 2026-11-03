@@ -19,7 +19,14 @@
 ## 2026-11-02
 
 - Renamed the long dataset files to `roblox-ips.txt`, `aws-ips.txt`, and `all-ips.txt`.
-- Added `verified-ips.txt` as an evidence ledger for individual Roblox game-instance IPv4 observations.
-- Documented Ctrl+Shift+F3 game-instance diagnostics and GlassWire cross-checking, with the in-game datacenter-fetched IPv4 result preferred.
+- Added `roblox-verified-ips.txt` as a location-grouped ledger for Roblox game-instance IPs, confidence scores, and ICMP/instance evidence.
+- Documented Ctrl+Shift+F3 game-instance diagnostics as the primary source for identifying instance IPs.
 - Added an iplocation.net Compare Results by Provider and Globalping location-validation workflow.
-- Recorded the maintainer-provided Seattle evidence for `128.116.115.33`, explicitly separating the related `128.116.115.3` ping from an exact-IP test.
+- Recorded the Seattle range using the requested confidence/ICMP/instance notation; the related `.3` ping is explicitly distinct from the `.33` instance IP.
+
+## 2026-11-02 (follow-up)
+
+- Renamed `verified-ips.txt` to `roblox-verified-ips.txt`.
+- Removed GlassWire references and methods from project documentation; Ctrl+Shift+F3 is the primary game-instance evidence source.
+- Added confidence scores with an explicit warning that confidence is not guaranteed accuracy.
+- Clarified that non-responding ICMP targets should be skipped and reported for maintainer verification.
