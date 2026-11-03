@@ -151,6 +151,6 @@ The country and city groupings describe observed or estimated network locations,
 - [AWS public IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json)
 - [AWS geo-IP feed](https://ip-ranges.amazonaws.com/geo-ip-feed.csv)
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how entries are checked, verified, and kept synchronized. [CHANGELOG.md](CHANGELOG.md) records significant dataset changes.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how entries are checked, verified, and kept synchronized.
 
 Search terms: Roblox server IP addresses, Roblox server locations, Roblox game server IP list, Roblox data center locations, Roblox AWS server IP ranges, Roblox CIDR list.
