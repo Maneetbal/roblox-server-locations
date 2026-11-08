@@ -44,8 +44,11 @@ Record:
 - The exact target IP address.
 - The Globalping measurement URL.
 - Probe location and network/ASN.
-- Packet loss and minimum, average, and maximum RTT.
+- Packet loss and minimum, average, and maximum RTT for each probe.
+- Which probe had the **lowest average RTT in each candidate city**.
 - Any unusual results or excluded outliers, with the reason for exclusion.
+
+For confidence scoring, compare the **average RTT of the single lowest-latency eligible probe in the candidate city**. Do not average the results from all probes in that city. The latency threshold is based on the lowest-latency node's average RTT, not the city-wide average.
 
 Akamai Connected Cloud probes (for example, AS63949) can be particularly useful on Globalping because they provide additional network vantage points. They are recommended when available, but they are not required; use other suitable probes as well.
 
@@ -55,14 +58,37 @@ If the exact game-instance IP does not respond to ICMP, skip the ping test and r
 
 If you test a related address instead, identify it as a separate endpoint. For example, `ICMP=.3` may describe a related `.3` address when the game-instance address ends in `.33`. This is indirect location evidence, not a ping result for the instance IP.
 
-## 4. Submit evidence for review
+## 4. Check Roblox's edge-term hostname
+
+Look for a Roblox hostname matching this pattern:
+
+```text
+edge-term4-<identifier>.roblox.com
+```
+
+For the exact game-instance IPv4 address being evaluated:
+
+1. Find the hostname whose identifier corresponds to the candidate location.
+2. Query its DNS A record.
+3. Record the hostname, the DNS answer, the lookup method, and the date checked.
+4. Confirm that the A record contains the **exact game-instance IP**. An address elsewhere in the same /24 is not an exact match.
+5. Compare the identifier's location with the city supported by the geolocation and latency evidence.
+
+A matching hostname is the final 1% of the location-confidence assessment only when it resolves to the exact IP and its location identifier agrees with the independently selected city. Do not extend a hostname match to an entire CIDR range or to other IPs in that range.
+
+**When hostname and latency disagree:** The measured location takes priority over the hostname identifier. For example, if a hostname identifies Frankfurt but the lowest-latency eligible probe is in Amsterdam, and the other location evidence supports Amsterdam, list the location as Amsterdam. The conflicting hostname does not qualify for the 100% rating; with a lowest-node average RTT of 1.5 ms or less, the location can be rated 99%.
+
+A missing hostname, a hostname that does not resolve to the exact IP, or a hostname with a conflicting location does not earn the hostname point.
+
+## 5. Submit evidence for review
 
 Open a [GitHub issue](https://github.com/Maneetbal/roblox-server-locations/issues) before proposing a new verified entry. Include:
 
 - Exact Ctrl+Shift+F3 diagnostic line and observation date.
 - Screenshot of the diagnostic output.
 - Exact iplocation.net lookup URL and provider results.
-- Globalping measurement URL(s), or a note explaining why ICMP testing was skipped.
+- Globalping measurement URL(s), probe cities/networks, and the lowest average RTT probe in each candidate city, or a note explaining why ICMP testing was skipped.
+- Roblox `edge-term4` hostname, DNS A-record result, and lookup date, if one is found. State explicitly when no exact match is found.
 - Proposed country, city/region, and CIDR range, if known.
 
 Do not add an observation to the verified list until it has been reviewed.
@@ -76,8 +102,6 @@ United States
 -------------
 - Seattle, WA
   - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
-- Los Angeles, CA
-  - 128.116.116.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
 ```
 
 - `Instance=.33` identifies the game-instance address reported by Roblox.
@@ -86,9 +110,18 @@ United States
 
 ## Confidence ratings
 
-Use a whole-number rating from 0 to 100. Confidence is a maintainer's assessment of the strength and consistency of the available evidence.
+Use a whole-number rating from 0 to 100. Confidence is a maintainer's assessment of the reliability of the listed **location**, not an accuracy percentage, probability, or guarantee.
 
-A confidence rating is **not** an accuracy percentage, probability, or guarantee. Record the evidence so other contributors can independently assess the conclusion.
+Use the average RTT of the **single lowest-latency eligible Globalping probe in the selected city** for the latency tier. Do not use the average across all probes in that city.
+
+| Confidence | Requirement |
+| ---: | --- |
+| **100%** | All existing location checks pass; the selected city's lowest-latency eligible probe averages **1.5 ms or less**; and an `edge-term4-<identifier>.roblox.com` hostname resolves to the exact IP being evaluated and identifies the same city. |
+| **99%** | The other location checks support the selected city and its lowest-latency probe averages **1.5 ms or less**, but no matching Roblox hostname is found, it does not resolve to the exact IP, or its identifier conflicts with the measured city. |
+| **95%** | The selected city's lowest-latency eligible probe averages **more than 1.5 ms but less than 2.0 ms**. |
+| **90%** | The selected city's lowest-latency eligible probe averages **2.0 ms or more**. |
+
+The 95% and 90% latency tiers take precedence over the 99% and 100% tiers. A matching hostname cannot raise an entry to 100% when its selected city's lowest-latency probe averages more than 1.5 ms. The 90% tier is the lowest latency tier currently defined; reassess the entry if other evidence suggests the location itself is wrong.
 
 ## Network classification
 
