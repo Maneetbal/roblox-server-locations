@@ -18,3 +18,5 @@ United States
   - 128.116.48.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
 
 Confidence refers to how reliable the listed location is. It does not indicate confidence in the ICMP endpoint or the game-instance IP observation.
+
+**Confidence-rule migration note:** The entries above retain their previously recorded ratings. The new confidence rules require an exact `edge-term4-<identifier>.roblox.com` DNS A-record match to the evaluated game-instance IP for a 100% rating. The repository does not currently record that hostname evidence for these entries, so their 100% ratings must be rechecked before being treated as verified under the new rules. Do not infer an exact hostname match from an ICMP endpoint or from another address in the same /24.
