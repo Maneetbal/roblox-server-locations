@@ -95,17 +95,19 @@ Do not add an observation to the verified list until it has been reviewed.
 
 ## Entry format
 
-The verification ledger uses this format:
+The verification ledger uses this format, with the hostname appended after the instance and ICMP fields when an exact matching hostname has been verified:
 
 ```text
 United States
 -------------
-- Seattle, WA
-  - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
+- Ashburn, VA
+  - 128.116.56.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad2.roblox.com)
 ```
 
 - `Instance=.33` identifies the game-instance address reported by Roblox.
 - `ICMP=.3` identifies a separate related address used for the ping measurement. It does not mean the instance address responded to ICMP.
+- `Hostname=edge-term4-iad2.roblox.com` records the verified Roblox hostname. Include this field only when the hostname's DNS A record resolves to the exact IP address being evaluated and its location identifier agrees with the selected city. Do not infer a hostname match for every address in the CIDR range.
+- Omit the `Hostname=` field when no qualifying exact-IP hostname match has been verified.
 - Use `ICMP=No response` when the exact address does not answer ICMP and no related endpoint is being reported.
 
 ## Confidence ratings
