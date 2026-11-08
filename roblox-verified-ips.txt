@@ -4,6 +4,10 @@ Last updated: 2026-11-23
 
 United States
 -------------
+- Ashburn, VA
+  - 128.116.102.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
+  - 128.116.56.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
+
 - Seattle, WA
   - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33)
 
