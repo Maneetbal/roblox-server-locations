@@ -8,14 +8,22 @@ United States
   - 128.116.56.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad2.roblox.com)
   - 128.116.102.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad4.roblox.com)
 
-- Seattle, WA
-  - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sea1.roblox.com)
-
-- Los Angeles, CA
-  - 128.116.116.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax2.roblox.com)
+- Atlanta, GA
+  - 128.116.2.0/24 Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-atl4.roblox.com)
 
 - Chicago, IL
   - 128.116.48.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-ord2.roblox.com)
+
+- Dallas, TX
+  - 128.116.14.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-dfw4.roblox.com)
+  - 128.116.95.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-dfw2.roblox.com)
+
+- Los Angeles, CA
+  - 128.116.116.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax2.roblox.com)
+  - 128.116.63.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax4.roblox.com)
+
+- Seattle, WA
+  - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sea1.roblox.com)
 
 Confidence refers to how reliable the listed location is. It does not indicate confidence in the ICMP endpoint or the game-instance IP observation.
 
