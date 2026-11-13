@@ -3,5 +3,6 @@
   "name": "roblox-server-locations",
   "main": "worker/index.js",
   "compatibility_date": "2026-11-12",
-  "workers_dev": true
+  "workers_dev": true,
+  "previews": {}
 }
