@@ -64,7 +64,7 @@ jobs:
           if not rows:
               raise SystemExit("No IP records were generated")
           Path("out/v1").mkdir(parents=True, exist_ok=True)
-          Path("out/v1/database.json").write_text(json.dumps(rows, separators=(",", ":")), encoding="utf-8")
+          Path("out/v1/database.json").write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8")
           PY
       - name: Publish to api branch
         env:
