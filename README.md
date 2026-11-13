@@ -17,7 +17,7 @@ Find **Roblox game server IP ranges**, estimated **Roblox server locations**, an
 
 ## JSON API
 
-The repository can publish a static JSON API through GitHub Pages. See [`api/README.md`](api/README.md) for the endpoint, response schema, and CIDR lookup example. The API is generated from `roblox-verified-ips.txt` by GitHub Actions; it is a downloadable location database, not a live server-side query service. GitHub Pages must be enabled with **Settings → Pages → Build and deployment → Source → GitHub Actions** before the endpoint is published.
+The repository publishes a compact static JSON API through GitHub Pages. See [`api/README.md`](api/README.md) for the endpoint and six-field response format (`ip`, `city`, `region`, `country`, `loc`, `org`). The API is generated from `roblox-verified-ips.txt` by GitHub Actions; clients download and cache the JSON array, then look up IPs locally.
 
 ## How to identify a Roblox game-server IP
 
