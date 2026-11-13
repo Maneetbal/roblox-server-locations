@@ -20,7 +20,7 @@ function parseIPv4(value) {
 
   let result = 0;
   for (const part of parts) {
-    if (!/^\\d{1,3}$/.test(part)) return null;
+    if (!/^\d{1,3}$/.test(part)) return null;
     const octet = Number(part);
     if (octet > 255) return null;
     result = ((result << 8) | octet) >>> 0;
@@ -61,18 +61,18 @@ async function getExternalLocation(ip) {
   // Prefer IP2Location.io's keyless API (up to 1,000 requests/day).
   try {
     const response = await fetch(
-      `https://api.ip2location.io/?ip=${encodeURIComponent(ip)}`,
+      \`https://api.ip2location.io/?ip=\${encodeURIComponent(ip)}\`,
       { cf: { cacheTtl: 3600, cacheEverything: true } }
     );
 
     if (response.ok) {
       const data = await response.json();
       if (data.ip && !data.error) {
-        const asn = data.asn ? `AS${data.asn}` : "";
+        const asn = data.asn ? \`AS\${data.asn}\` : "";
         const org = [asn, data.as, data.isp].filter(Boolean).join(" ");
         const loc =
           data.latitude != null && data.longitude != null
-            ? `${data.latitude},${data.longitude}`
+            ? \`\${data.latitude},\${data.longitude}\`
             : undefined;
 
         return {
@@ -92,7 +92,7 @@ async function getExternalLocation(ip) {
 
   // Keyless IPinfo legacy endpoint; limited to 1,000 requests/day.
   const response = await fetch(
-    `https://ipinfo.io/${encodeURIComponent(ip)}/json`,
+    \`https://ipinfo.io/\${encodeURIComponent(ip)}/json\`,
     { cf: { cacheTtl: 3600, cacheEverything: true } }
   );
 
@@ -135,7 +135,7 @@ export default {
       return json({ error: "Method not allowed" }, 405);
     }
 
-    const match = url.pathname.match(/^\\/((?:\\d{1,3}\\.){3}\\d{1,3})\\/json\\/?$/);
+    const match = url.pathname.match(/^\/((?:\d{1,3}\.){3}\d{1,3})\/json\/?$/);
     if (!match) {
       return json({ error: "Use /{ip}/json" }, 400);
     }
