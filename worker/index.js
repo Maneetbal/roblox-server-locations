@@ -20,7 +20,7 @@ function parseIPv4(value) {
 
   let result = 0;
   for (const part of parts) {
-    if (!/^\\d{1,3}$/.test(part)) return null;
+    if (!/^\d{1,3}$/.test(part)) return null;
     const octet = Number(part);
     if (octet > 255) return null;
     result = ((result << 8) | octet) >>> 0;
@@ -76,7 +76,7 @@ export default {
       return json({ error: "Method not allowed" }, 405);
     }
 
-    const match = url.pathname.match(/^\\/((?:\\d{1,3}\\.){3}\\d{1,3})\\/json\\/?$/);
+    const match = url.pathname.match(/^\/((?:\d{1,3}\.){3}\d{1,3})\/json\/?$/);
     if (!match) {
       return json({ error: "Use /{ip}/json" }, 400);
     }
