@@ -4,11 +4,11 @@ Endpoint:
 
 `https://maneetbal.github.io/roblox-server-locations/api/v1/database.json`
 
-The response is a compact JSON array. Every record contains exactly these six fields:
+The response is a compact, minified JSON array generated from **[`all-ips.txt`](../all-ips.txt)**. Every record contains exactly these six fields:
 
 ```json
 {
-  "ip": "128.116.115.33",
+  "ip": "128.116.115.0/24",
   "city": "Seattle",
   "region": "Washington",
   "country": "United States",
@@ -17,13 +17,15 @@ The response is a compact JSON array. Every record contains exactly these six fi
 }
 ```
 
-- `ip` is the listed network's assumed game-instance address, using the `.33` suffix from the source ledger.
+- `ip` contains the exact IPv4 address or CIDR range listed in `all-ips.txt`; ranges are not converted into assumed `.33` instance addresses.
 - `city`, `region`, and `country` are estimated location labels.
 - `loc` is the approximate city-centre latitude and longitude, not a verified data-centre coordinate.
-- `org` is the Roblox ASN label.
+- `org` is `Amazon AWS` for entries marked `(AWS)` in the source list, otherwise `AS22697 Roblox`.
 
-**Important:** The source ledger assumes the `.33` instance suffix; it does not independently verify every generated address. Entries without a numeric instance suffix are omitted. The response is a static array, not a server-side IP query endpoint. Voidstrap should download and cache it, then find the matching `ip` locally.
+The API includes the Roblox-associated and AWS-associated ranges in `all-ips.txt`, including entries marked as reserved. A range being listed does not prove that every address in it currently hosts a Roblox game server.
 
-The database is rebuilt by GitHub Actions whenever the source ledger or generator changes on `main`.
+The response is a static array, not a server-side IP query endpoint. Voidstrap should download and cache it, then match an address against the listed IP/CIDR ranges locally.
+
+The database is rebuilt by GitHub Actions whenever `all-ips.txt`, the generator, or the deployment workflow changes on `main`.
 
 Unofficial community project; not affiliated with Roblox.
