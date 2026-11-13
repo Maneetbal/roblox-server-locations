@@ -58,56 +58,18 @@ async function getDatabase() {
 }
 
 async function getExternalLocation(ip) {
-  // Prefer IP2Location.io's keyless API (up to 1,000 requests/day).
-  try {
-    const response = await fetch(
-      `https://api.ip2location.io/?ip=${encodeURIComponent(ip)}&format=json`,
-      { cf: { cacheTtl: 3600, cacheEverything: true } }
-    );
-
-    if (!response.ok) {
-      console.warn("IP2Location HTTP error:", response.status);
-    } else {
-      const data = await response.json();
-      if (data.error) {
-        console.warn("IP2Location API error:", JSON.stringify(data.error));
-      }
-      if (data.ip && !data.error) {
-        const asn = data.asn ? `AS${data.asn}` : "";
-        const org = [asn, data.as, data.isp].filter(Boolean).join(" ");
-        const loc =
-          data.latitude != null && data.longitude != null
-            ? `${data.latitude},${data.longitude}`
-            : undefined;
-
-        return {
-          api: "ip2loc",
-          ip,
-          city: data.city_name || "",
-          region: data.region_name || "",
-          country: data.country_name || data.country_code || "",
-          ...(loc ? { loc } : {}),
-          ...(org ? { org } : {})
-        };
-      }
-    }
-  } catch (error) {
-    console.warn("IP2Location request failed:", String(error));
-  }
-
-  // Keyless IPinfo legacy endpoint; limited to 1,000 requests/day.
   const response = await fetch(
     `https://ipinfo.io/${encodeURIComponent(ip)}/json`,
     { cf: { cacheTtl: 3600, cacheEverything: true } }
   );
 
   if (!response.ok) {
-    throw new Error("External IP lookup failed");
+    throw new Error("IPinfo lookup failed");
   }
 
   const data = await response.json();
   if (!data.ip || data.error) {
-    throw new Error("External IP lookup returned no result");
+    throw new Error("IPinfo returned no result");
   }
 
   return {
