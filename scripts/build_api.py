@@ -1,91 +1,102 @@
 #!/usr/bin/env python3
-"""Build the static Roblox Server Locations JSON API for GitHub Pages."""
+"""Build a compact static Roblox server-location JSON database."""
 
 from __future__ import annotations
 
 import ipaddress
 import json
 import re
-from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "roblox-verified-ips.txt"
 OUTPUT = ROOT / "_site" / "api" / "v1" / "database.json"
 
-COUNTRY_CODE = {
-    "United States": "US",
-    "Australia": "AU",
-    "Brazil": "BR",
-    "France": "FR",
-    "Germany": "DE",
-    "India": "IN",
-    "Japan": "JP",
-    "Netherlands": "NL",
-    "Singapore": "SG",
-    "United Kingdom": "GB",
+# Approximate city-centre coordinates; these are location labels, not
+# confirmed physical Roblox data-centre coordinates.
+CITY_DATA = {
+    ("United States", "Ashburn"): ("Virginia", "39.0438,-77.4874"),
+    ("United States", "Atlanta"): ("Georgia", "33.7490,-84.3880"),
+    ("United States", "Chicago"): ("Illinois", "41.8781,-87.6298"),
+    ("United States", "Dallas"): ("Texas", "32.7767,-96.7970"),
+    ("United States", "Los Angeles"): ("California", "34.0522,-118.2437"),
+    ("United States", "Miami"): ("Florida", "25.7617,-80.1918"),
+    ("United States", "New York City"): ("New York", "40.7128,-74.0060"),
+    ("United States", "Seattle"): ("Washington", "47.6062,-122.3321"),
+    ("Australia", "Sydney"): ("New South Wales", "-33.8688,151.2093"),
+    ("Brazil", "Sao Paulo"): ("Sao Paulo", "-23.5505,-46.6333"),
+    ("France", "Paris"): ("Ile-de-France", "48.8566,2.3522"),
+    ("Germany", "Frankfurt"): ("Hesse", "50.1109,8.6821"),
+    ("India", "Mumbai"): ("Maharashtra", "19.0760,72.8777"),
+    ("Japan", "Tokyo"): ("Tokyo", "35.6762,139.6503"),
+    ("Netherlands", "Amsterdam"): ("North Holland", "52.3676,4.9041"),
+    ("Singapore", "Singapore"): ("Singapore", "1.3521,103.8198"),
+    ("United Kingdom", "London"): ("England", "51.5072,-0.1276"),
 }
 
+ORG = "AS22697 Roblox"
 
-def parse_database(text: str) -> list[dict]:
-    entries: list[dict] = []
+
+def parse_database(text: str) -> list[dict[str, str]]:
+    entries: list[dict[str, str]] = []
     country = None
     city = None
 
     for raw_line in text.splitlines():
         line = raw_line.rstrip()
-
         if not line or line.startswith(("=", "**", "#")) or line.startswith("Last updated:"):
             continue
 
-        # Country headings are unindented plain text.
         if not line.startswith((" ", "\t", "-")):
             country = line.strip()
             city = None
             continue
 
-        # City headings use a single leading dash; IP rows are indented.
         city_match = re.match(r"^-\s+(.+)$", line)
         if city_match:
-            city = city_match.group(1).strip()
+            city = city_match.group(1).strip().partition(",")[0].strip()
             continue
 
         ip_match = re.match(
             r"^\s+-\s+((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)"
-            r"(?:\s+\(Confidence=(\d{1,3})\))?"
-            r"(?:\s+\(ICMP=([^)]*)\))?"
-            r"(?:\s+\(Instance=([^)]*)\))?"
-            r"(?:\s+\(Hostname=([^)]*)\))?",
+            r".*?\(Instance=([^)]*)\)",
             line,
         )
         if not ip_match or not country or not city:
             continue
 
+        # Only publish entries with a numeric instance suffix. The repository
+        # currently assumes .33; this is not independent proof of the IP.
+        suffix_text = ip_match.group(2).strip()
+        suffix_match = re.fullmatch(r"\.(\d{1,3})", suffix_text)
+        if not suffix_match:
+            continue
+
         network = ipaddress.ip_network(ip_match.group(1), strict=False)
-        city_name, _, region = city.partition(",")
-        confidence = int(ip_match.group(2)) if ip_match.group(2) else None
-        icmp = ip_match.group(3)
-        instance = ip_match.group(4)
-        hostname = ip_match.group(5)
+        if network.version != 4 or network.prefixlen < 24:
+            continue
+
+        location = CITY_DATA.get((country, city))
+        if location is None:
+            raise SystemExit(f"Missing city metadata for {country}, {city}")
+
+        region, coordinates = location
+        octets = str(network.network_address).split(".")
+        ip = ".".join(octets[:3] + [suffix_match.group(1)])
 
         entries.append({
-            "cidr": str(network),
-            "city": city_name.strip(),
-            "region": region.strip() or None,
+            "ip": ip,
+            "city": city,
+            "region": region,
             "country": country,
-            "country_code": COUNTRY_CODE.get(country),
-            "confidence": confidence,
-            "confidence_type": "maintainer-assessed-location-confidence" if confidence is not None else None,
-            "icmp_endpoint_suffix": icmp,
-            "instance_suffix": instance,
-            "instance_suffix_is_assumed": bool(instance),
-            "hostname": hostname,
-            "hostname_evidence_for": "ICMP endpoint" if hostname else None,
+            "loc": coordinates,
+            "org": ORG,
         })
 
-    # Most-specific prefixes must be checked first by API consumers.
-    entries.sort(key=lambda item: (-ipaddress.ip_network(item["cidr"]).prefixlen,
-                                   int(ipaddress.ip_network(item["cidr"]).network_address)))
+    # Keep the response compact and deterministic.
+    entries.sort(key=lambda item: tuple(int(part) for part in item["ip"].split(".")))
+    if not entries:
+        raise SystemExit("No IP entries were parsed; refusing to publish an empty API.")
     return entries
 
 
@@ -94,27 +105,11 @@ def main() -> None:
         raise SystemExit(f"Missing source database: {SOURCE}")
 
     entries = parse_database(SOURCE.read_text(encoding="utf-8"))
-    if not entries:
-        raise SystemExit("No IP entries were parsed; refusing to publish an empty API.")
-
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    payload = {
-        "schema_version": 1,
-        "name": "Roblox Server Locations API",
-        "description": "Static CIDR location reference built from the repository's reviewed verified-IP ledger.",
-        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
-        "source": "https://github.com/Maneetbal/roblox-server-locations/blob/main/roblox-verified-ips.txt",
-        "lookup_method": "Match the queried IPv4 address against entries[].cidr; use the most-specific matching prefix.",
-        "important_notes": [
-            "Locations are estimates, not confirmation of a physical Roblox data center.",
-            "confidence is a maintainer-assessed location score, not a statistical probability.",
-            "instance_suffix values in the source ledger are maintainer assumptions, not independently captured full game-instance IPs.",
-            "hostname evidence in the source ledger refers to the ICMP endpoint, not necessarily the game-instance address.",
-            "A CIDR match identifies a network location entry; it does not prove that every address in the prefix hosts a Roblox game instance."
-        ],
-        "entries": entries,
-    }
-    OUTPUT.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    OUTPUT.write_text(
+        json.dumps(entries, separators=(",", ":"), ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
     site_index = ROOT / "_site" / "index.html"
     site_index.parent.mkdir(parents=True, exist_ok=True)
@@ -128,18 +123,14 @@ def main() -> None:
 </head>
 <body>
   <h1>Roblox Server Locations API</h1>
-  <p>A static, community-maintained IPv4 CIDR location reference.</p>
-  <p><a href="./api/v1/database.json">API database (JSON)</a></p>
-  <p>See the <a href="https://github.com/Maneetbal/roblox-server-locations">GitHub repository</a>
-  for methodology, verification notes, and contributions.</p>
-  <p>Unofficial project; not affiliated with Roblox. Locations are estimates.</p>
+  <p><a href="./api/v1/database.json">JSON database</a></p>
 </body>
 </html>
 """,
         encoding="utf-8",
     )
 
-    print(f"Generated {len(entries)} API entries at {OUTPUT}")
+    print(f"Generated {len(entries)} compact API entries at {OUTPUT}")
 
 
 if __name__ == "__main__":
