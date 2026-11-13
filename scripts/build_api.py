@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a compact static Roblox server-location JSON database."""
+"""Build a compact static Roblox-associated IP-location JSON database."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "roblox-verified-ips.txt"
+SOURCE = ROOT / "all-ips.txt"
 OUTPUT = ROOT / "_site" / "api" / "v1" / "database.json"
 
 # Approximate city-centre coordinates; these are location labels, not
@@ -17,63 +17,78 @@ OUTPUT = ROOT / "_site" / "api" / "v1" / "database.json"
 CITY_DATA = {
     ("United States", "Ashburn"): ("Virginia", "39.0438,-77.4874"),
     ("United States", "Atlanta"): ("Georgia", "33.7490,-84.3880"),
+    ("United States", "Boardman"): ("Oregon", "45.8399,-119.7006"),
     ("United States", "Chicago"): ("Illinois", "41.8781,-87.6298"),
+    ("United States", "Columbus"): ("Ohio", "39.9612,-82.9988"),
     ("United States", "Dallas"): ("Texas", "32.7767,-96.7970"),
     ("United States", "Los Angeles"): ("California", "34.0522,-118.2437"),
     ("United States", "Miami"): ("Florida", "25.7617,-80.1918"),
     ("United States", "New York City"): ("New York", "40.7128,-74.0060"),
+    ("United States", "San Jose"): ("California", "37.3382,-121.8863"),
     ("United States", "Seattle"): ("Washington", "47.6062,-122.3321"),
+    ("Argentina", "Buenos Aires"): ("Buenos Aires", "-34.6037,-58.3816"),
     ("Australia", "Sydney"): ("New South Wales", "-33.8688,151.2093"),
     ("Brazil", "Sao Paulo"): ("Sao Paulo", "-23.5505,-46.6333"),
+    ("Chile", "Santiago"): ("Santiago Metropolitan", "-33.4489,-70.6693"),
     ("France", "Paris"): ("Ile-de-France", "48.8566,2.3522"),
     ("Germany", "Frankfurt"): ("Hesse", "50.1109,8.6821"),
     ("India", "Mumbai"): ("Maharashtra", "19.0760,72.8777"),
+    ("Ireland", "Dublin"): ("Leinster", "53.3498,-6.2603"),
+    ("Israel", "Tel Aviv"): ("Tel Aviv District", "32.0853,34.7818"),
+    ("Japan", "Osaka"): ("Osaka", "34.6937,135.5023"),
     ("Japan", "Tokyo"): ("Tokyo", "35.6762,139.6503"),
+    ("Malaysia", "Kuala Lumpur"): ("Kuala Lumpur", "3.1390,101.6869"),
+    ("Mexico", "Queretaro"): ("Queretaro", "20.5888,-100.3899"),
     ("Netherlands", "Amsterdam"): ("North Holland", "52.3676,4.9041"),
     ("Singapore", "Singapore"): ("Singapore", "1.3521,103.8198"),
+    ("Switzerland", "Zurich"): ("Zurich", "47.3769,8.5417"),
+    ("Turkey", "Istanbul"): ("Istanbul", "41.0082,28.9784"),
     ("United Kingdom", "London"): ("England", "51.5072,-0.1276"),
 }
 
-ORG = "AS22697 Roblox"
+IP_PATTERN = re.compile(r"^\s+-\s+((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)(.*)$")
+
+
+def parse_city(label: str) -> str:
+    # Strip the region code and optional status annotation from the city heading.
+    return label.split(",", 1)[0].replace("(Reserved)", "").strip()
 
 
 def parse_database(text: str) -> list[dict[str, str]]:
     entries: list[dict[str, str]] = []
-    country = None
-    city = None
+    country: str | None = None
+    city: str | None = None
+    seen: set[tuple[str, str, str]] = set()
 
     for raw_line in text.splitlines():
         line = raw_line.rstrip()
         if not line or line.startswith(("=", "**", "#")) or line.startswith("Last updated:"):
             continue
 
+        # Country headings are unindented. Ignore the document title.
         if not line.startswith((" ", "\t", "-")):
-            country = line.strip()
-            city = None
+            heading = line.strip()
+            if heading != "Roblox Server IP List":
+                country = heading
+                city = None
             continue
 
+        # City headings begin at column zero; IP entries are indented.
         city_match = re.match(r"^-\s+(.+)$", line)
         if city_match:
-            city = city_match.group(1).strip().partition(",")[0].strip()
+            city = parse_city(city_match.group(1))
             continue
 
-        ip_match = re.match(
-            r"^\s+-\s+((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)"
-            r".*?\(Instance=([^)]*)\)",
-            line,
-        )
+        ip_match = IP_PATTERN.match(line)
         if not ip_match or not country or not city:
             continue
 
-        # Only publish entries with a numeric instance suffix. The repository
-        # currently assumes .33; this is not independent proof of the IP.
-        suffix_text = ip_match.group(2).strip()
-        suffix_match = re.fullmatch(r"\.(\d{1,3})", suffix_text)
-        if not suffix_match:
+        ip_or_cidr, notes = ip_match.groups()
+        try:
+            network = ipaddress.ip_network(ip_or_cidr, strict=False)
+        except ValueError:
             continue
-
-        network = ipaddress.ip_network(ip_match.group(1), strict=False)
-        if network.version != 4 or network.prefixlen < 24:
+        if network.version != 4:
             continue
 
         location = CITY_DATA.get((country, city))
@@ -81,22 +96,30 @@ def parse_database(text: str) -> list[dict[str, str]]:
             raise SystemExit(f"Missing city metadata for {country}, {city}")
 
         region, coordinates = location
-        octets = str(network.network_address).split(".")
-        ip = ".".join(octets[:3] + [suffix_match.group(1)])
+        org = "Amazon AWS" if "(AWS)" in notes else "AS22697 Roblox"
+        key = (str(network), country, city)
+        if key in seen:
+            continue
+        seen.add(key)
 
         entries.append({
-            "ip": ip,
+            "ip": str(network),
             "city": city,
             "region": region,
             "country": country,
             "loc": coordinates,
-            "org": ORG,
+            "org": org,
         })
 
-    # Keep the response compact and deterministic.
-    entries.sort(key=lambda item: tuple(int(part) for part in item["ip"].split(".")))
+    # Deterministic output, sorted by network address and prefix length.
+    entries.sort(key=lambda item: (
+        int(ipaddress.ip_network(item["ip"]).network_address),
+        ipaddress.ip_network(item["ip"]).prefixlen,
+        item["country"],
+        item["city"],
+    ))
     if not entries:
-        raise SystemExit("No IP entries were parsed; refusing to publish an empty API.")
+        raise SystemExit("No IP ranges were parsed; refusing to publish an empty API.")
     return entries
 
 
@@ -130,7 +153,7 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    print(f"Generated {len(entries)} compact API entries at {OUTPUT}")
+    print(f"Generated {len(entries)} compact API entries from all-ips.txt")
 
 
 if __name__ == "__main__":
