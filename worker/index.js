@@ -8,7 +8,7 @@ const JSON_HEADERS = {
 };
 
 function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
+  return new Response(JSON.stringify(data, null, 2), {
     status,
     headers: JSON_HEADERS
   });
