@@ -5,22 +5,22 @@ Last updated: 2026-11-12
 United States
 -------------
 - Ashburn, VA
-  - 128.116.56.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad2.roblox.com)
-  - 128.116.102.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad4.roblox.com)
+  - 128.116.56.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad2.roblox.com)
+  - 128.116.102.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad4.roblox.com)
 
 - Atlanta, GA
-  - 128.116.2.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-atl4.roblox.com)
+  - 128.116.2.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-atl4.roblox.com)
 
 - Chicago, IL
-  - 128.116.48.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-ord2.roblox.com)
+  - 128.116.48.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-ord2.roblox.com)
 
 - Dallas, TX
-  - 128.116.14.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-dfw4.roblox.com)
-  - 128.116.95.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-dfw2.roblox.com)
+  - 128.116.14.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-dfw4.roblox.com)
+  - 128.116.95.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-dfw2.roblox.com)
 
 - Los Angeles, CA
-  - 128.116.116.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax2.roblox.com)
-  - 128.116.63.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax4.roblox.com)
+  - 128.116.116.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax2.roblox.com)
+  - 128.116.63.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax4.roblox.com)
   - 128.116.1.0/24 (Confidence=75) (ICMP=No response) (Instance=.33)
 
 - Miami, FL
@@ -32,7 +32,7 @@ United States
   - 128.116.30.3 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lga4.roblox.com)
 
 - Seattle, WA
-  - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sea1.roblox.com)
+  - 128.116.115.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sea1.roblox.com)
 
 Australia
 ---------
@@ -87,8 +87,8 @@ Confidence refers to how reliable the listed location is. It does not indicate c
 
 **Maintainer-assumption note:** For the 26 newly added entries, `Instance=.33` is an assumed value supplied by the repository maintainer for this update. It was not independently captured from Roblox's `Datacenter fetched IPV4,` diagnostic line. These entries should not be treated as directly observed game-instance IPs until that evidence is collected.
 
-**Hostname note:** The newly discovered `edge-term4` DNS A records resolve to the tested `.3` ICMP endpoints, not to the assumed `.33` instance addresses. Therefore, no new `Hostname=` fields have been added. The hostname matches support the ICMP endpoint/location evidence only.
+**Hostname note:** The `edge-term4` DNS A records listed here resolve to the tested `.3` ICMP endpoints, not to the assumed `.33` instance addresses. The hostname matches therefore support the ICMP endpoint/location evidence only. They do not qualify for the 100% hostname bonus, which requires an exact match to the evaluated game-instance IP.
 
-**Confidence-rule migration note:** The original entries retain their previously recorded ratings. The new confidence rules require an exact `edge-term4-<identifier>.roblox.com` DNS A-record match to the evaluated game-instance IP for a 100% rating. The repository does not currently record that hostname evidence for the original entries, so their 100% ratings must be rechecked before being treated as verified under the new rules. Do not infer an exact hostname match from an ICMP endpoint or from another address in the same /24.
+**Confidence update note:** The eight entries previously rated 100 have been reduced to 99. Their measured low-latency and hostname evidence supports the listed locations, but the hostname A records match the related `.3` ICMP endpoints rather than the assumed `.33` game-instance addresses. Under the repository's exact-IP rule, that hostname evidence cannot earn 100% confidence for the game-instance IP. Existing 99 ratings remain unchanged. The 75 rating for `128.116.1.0/24` remains provisional because ICMP did not respond.
 
 **Hostname mapping note:** `Hostname=` records the exact `edge-term4` DNS A-record match for the tested `.3` ICMP endpoint in the listed range. These hostnames identify the ICMP endpoint/location evidence; they do not independently verify the assumed `.33` game-instance address.
