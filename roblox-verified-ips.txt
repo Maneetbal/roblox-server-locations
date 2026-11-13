@@ -21,7 +21,7 @@ United States
 - Los Angeles, CA
   - 128.116.116.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax2.roblox.com)
   - 128.116.63.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax4.roblox.com)
-  - 128.116.1.0/24 (Confidence=75) (ICMP=No response) (Instance=.33)
+  - 128.116.1.0/24 (Confidence=70) (ICMP=No response) (Instance=N/A)
 
 - Miami, FL
   - 128.116.45.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-mia4.roblox.com)
