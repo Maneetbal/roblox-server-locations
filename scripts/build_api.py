@@ -45,17 +45,17 @@ def parse_database(text: str) -> list[dict]:
             continue
 
         # City headings use a single leading dash; IP rows are indented.
-        city_match = re.match(r"^-\\s+(.+)$", line)
+        city_match = re.match(r"^-\s+(.+)$", line)
         if city_match:
             city = city_match.group(1).strip()
             continue
 
         ip_match = re.match(
-            r"^\\s+-\\s+((?:\\d{1,3}\\.){3}\\d{1,3}(?:/\\d{1,2})?)"
-            r"(?:\\s+\\(Confidence=(\\d{1,3})\\))?"
-            r"(?:\\s+\\(ICMP=([^)]*)\\))?"
-            r"(?:\\s+\\(Instance=([^)]*)\\))?"
-            r"(?:\\s+\\(Hostname=([^)]*)\\))?",
+            r"^\s+-\s+((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)"
+            r"(?:\s+\(Confidence=(\d{1,3})\))?"
+            r"(?:\s+\(ICMP=([^)]*)\))?"
+            r"(?:\s+\(Instance=([^)]*)\))?"
+            r"(?:\s+\(Hostname=([^)]*)\))?",
             line,
         )
         if not ip_match or not country or not city:
@@ -68,7 +68,7 @@ def parse_database(text: str) -> list[dict]:
         instance = ip_match.group(4)
         hostname = ip_match.group(5)
 
-        entry = {
+        entries.append({
             "cidr": str(network),
             "city": city_name.strip(),
             "region": region.strip() or None,
@@ -81,8 +81,7 @@ def parse_database(text: str) -> list[dict]:
             "instance_suffix_is_assumed": bool(instance),
             "hostname": hostname,
             "hostname_evidence_for": "ICMP endpoint" if hostname else None,
-        }
-        entries.append(entry)
+        })
 
     # Most-specific prefixes must be checked first by API consumers.
     entries.sort(key=lambda item: (-ipaddress.ip_network(item["cidr"]).prefixlen,
