@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "roblox-verified-ips.txt"
+      - "all-ips.txt"
       - "scripts/build_api.py"
       - ".github/workflows/deploy-api.yml"
   workflow_dispatch:
