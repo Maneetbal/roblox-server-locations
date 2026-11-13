@@ -7,15 +7,12 @@ United States
 - Ashburn, VA
   - 128.116.56.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad2.roblox.com)
   - 128.116.102.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-iad4.roblox.com)
-  - 128.116.53.0/24 (Confidence=75) (ICMP=No response) (Instance=.33)
-  - 107.180.197.0/24 (Confidence=50) (ICMP=No response) (Instance=.33)
 
 - Atlanta, GA
   - 128.116.2.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-atl4.roblox.com)
 
 - Chicago, IL
   - 128.116.48.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-ord2.roblox.com)
-  - 128.116.84.0/24 (Confidence=70) (ICMP=No response) (Instance=.33)
 
 - Dallas, TX
   - 128.116.14.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-dfw4.roblox.com)
@@ -32,13 +29,7 @@ United States
 
 - New York City, NY
   - 128.116.32.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lga2.roblox.com)
-  - 128.116.30.3 (Confidence=95) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lga4.roblox.com)
-
-- San Jose, CA (Reserved)
-  - 128.116.117.0/24 (Confidence=70) (ICMP=No response) (Instance=.33)
-  - 128.116.67.0/24 (Confidence=70) (ICMP=No response) (Instance=.33)
-  - 209.206.42.0/24 (Confidence=60) (ICMP=No response) (Instance=.33)
-  - 209.206.43.0/24 (Confidence=60) (ICMP=No response) (Instance=.33)
+  - 128.116.30.3 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lga4.roblox.com)
 
 - Seattle, WA
   - 128.116.115.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sea1.roblox.com)
@@ -72,7 +63,6 @@ India
 Japan
 -----
 - Tokyo, JP
-  - 128.116.55.0/24 (Confidence=70) (ICMP=No response) (Instance=.33)
   - 128.116.120.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-nrt2.roblox.com)
 
 Netherlands
