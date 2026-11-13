@@ -1,5 +1,5 @@
 const DATABASE_URL =
-  "https://maneetbal.github.io/roblox-server-locations/api/v1/database.json";
+  "https://raw.githubusercontent.com/Maneetbal/roblox-server-locations/api/v1/database.json";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -42,7 +42,7 @@ function matchesCIDR(ipNumber, cidr) {
 
 async function getDatabase() {
   const response = await fetch(DATABASE_URL, {
-    cf: { cacheTtl: 600, cacheEverything: true }
+    cf: { cacheTtl: 120, cacheEverything: true }
   });
 
   if (!response.ok) {
