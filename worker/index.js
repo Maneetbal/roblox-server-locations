@@ -20,7 +20,7 @@ function parseIPv4(value) {
 
   let result = 0;
   for (const part of parts) {
-    if (!/^\d{1,3}$/.test(part)) return null;
+    if (!/^\\d{1,3}$/.test(part)) return null;
     const octet = Number(part);
     if (octet > 255) return null;
     result = ((result << 8) | octet) >>> 0;
@@ -57,6 +57,65 @@ async function getDatabase() {
   return database;
 }
 
+async function getExternalLocation(ip) {
+  // Prefer IP2Location.io's keyless API (up to 1,000 requests/day).
+  try {
+    const response = await fetch(
+      `https://api.ip2location.io/?ip=${encodeURIComponent(ip)}`,
+      { cf: { cacheTtl: 3600, cacheEverything: true } }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.ip && !data.error) {
+        const asn = data.asn ? `AS${data.asn}` : "";
+        const org = [asn, data.as, data.isp].filter(Boolean).join(" ");
+        const loc =
+          data.latitude != null && data.longitude != null
+            ? `${data.latitude},${data.longitude}`
+            : undefined;
+
+        return {
+          api: "ip2loc",
+          ip,
+          city: data.city_name || "",
+          region: data.region_name || "",
+          country: data.country_name || data.country_code || "",
+          ...(loc ? { loc } : {}),
+          ...(org ? { org } : {})
+        };
+      }
+    }
+  } catch {
+    // Try IPinfo if IP2Location is unavailable.
+  }
+
+  // Keyless IPinfo legacy endpoint; limited to 1,000 requests/day.
+  const response = await fetch(
+    `https://ipinfo.io/${encodeURIComponent(ip)}/json`,
+    { cf: { cacheTtl: 3600, cacheEverything: true } }
+  );
+
+  if (!response.ok) {
+    throw new Error("External IP lookup failed");
+  }
+
+  const data = await response.json();
+  if (!data.ip || data.error) {
+    throw new Error("External IP lookup returned no result");
+  }
+
+  return {
+    api: "ipinfo",
+    ip,
+    city: data.city || "",
+    region: data.region || "",
+    country: data.country || "",
+    ...(data.loc ? { loc: data.loc } : {}),
+    ...(data.org ? { org: data.org } : {})
+  };
+}
+
 export default {
   async fetch(request) {
     const url = new URL(request.url);
@@ -76,7 +135,7 @@ export default {
       return json({ error: "Method not allowed" }, 405);
     }
 
-    const match = url.pathname.match(/^\/((?:\d{1,3}\.){3}\d{1,3})\/json\/?$/);
+    const match = url.pathname.match(/^\\/((?:\\d{1,3}\\.){3}\\d{1,3})\\/json\\/?$/);
     if (!match) {
       return json({ error: "Use /{ip}/json" }, 400);
     }
@@ -93,20 +152,21 @@ export default {
         typeof item.ip === "string" && matchesCIDR(ipNumber, item.ip)
       );
 
-      if (!entry) {
-        return json({ error: "IP address not found" }, 404);
+      if (entry) {
+        return json({
+          api: "database",
+          ip: requestedIP,
+          city: entry.city,
+          region: entry.region,
+          country: entry.country,
+          loc: entry.loc,
+          org: entry.org
+        });
       }
 
-      return json({
-        ip: requestedIP,
-        city: entry.city,
-        region: entry.region,
-        country: entry.country,
-        loc: entry.loc,
-        org: entry.org
-      });
+      return json(await getExternalLocation(requestedIP));
     } catch {
-      return json({ error: "Could not load IP database" }, 502);
+      return json({ error: "Could not load IP location data" }, 502);
     }
   }
 };
