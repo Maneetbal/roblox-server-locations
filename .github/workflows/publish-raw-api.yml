@@ -59,7 +59,7 @@ jobs:
                   rows.append({
                       "ip": match.group(1), "city": re.sub(r",\s*[A-Z]{2}$", "", city),
                       "region": region, "country": country, "loc": coords.get(city, ""),
-                      "org": "Amazon AWS" if re.search(r"\\(AWS\\b", match.group(2)) is not None else "AS22697 Roblox"
+                      "org": "Amazon AWS" if "AWS" in match.group(2) else "AS22697 Roblox"
                   })
           if not rows:
               raise SystemExit("No IP records were generated")
