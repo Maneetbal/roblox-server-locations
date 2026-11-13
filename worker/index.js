@@ -42,7 +42,7 @@ function matchesCIDR(ipNumber, cidr) {
 
 async function getDatabase() {
   const response = await fetch(DATABASE_URL, {
-    cf: { cacheTtl: 300, cacheEverything: true }
+    cf: { cacheTtl: 600, cacheEverything: true }
   });
 
   if (!response.ok) {
