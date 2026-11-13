@@ -1,10 +1,34 @@
 # Contributing Roblox Server IPs and Location Evidence
 
-Help improve this community-maintained **Roblox server IP address and location database**. We welcome reproducible game-instance IP observations, Roblox server IP range corrections, city-level location research, and Globalping latency evidence. Contributions must be clearly sourced and must distinguish direct observations from estimates.
+Help improve this community-maintained **Roblox server IP address and location database**. You can contribute a suspected Roblox-related IP address by opening an issue, even if you have not completed the verification process. I may review the information and add the address to `roblox-ips.txt`.
+
+The detailed evidence requirements below apply **only when an IP is being proposed for the verified game-instance list** (`roblox-verified-ips.txt`). You do not need to complete those steps just to suggest an IP.
 
 This project is unofficial and is not affiliated with Roblox.
 
-## 1. Capture a Roblox game-instance IP address
+## 1. Submit an IP address for consideration
+
+To suggest an IP address, open a [GitHub issue](https://github.com/Maneetbal/roblox-server-locations/issues).
+
+Include whatever information you have:
+
+- The IP address or CIDR range.
+- Where you found it (for example, a Roblox game connection, a server log, or a network lookup).
+- Why you think it is related to Roblox.
+- Any supporting links, screenshots, or test results you already have.
+- The possible country or city, if known.
+
+**That's all that's required for a basic IP contribution.** You do not need a Ctrl+Shift+F3 screenshot, iplocation.net results, Globalping measurements, or an `edge-term4` hostname.
+
+An issue is a suggestion, not an automatic approval. I will review the information and may add the address to `roblox-ips.txt` or another appropriate list. Please do not add unreviewed addresses directly to `roblox-verified-ips.txt`.
+
+## 2. Requirements for a verified game-instance IP
+
+Only follow this section if you want an IP considered for `roblox-verified-ips.txt`. A verified entry needs evidence of both:
+- **Game-instance use:** Roblox's in-game diagnostic reports the exact IP.
+- **Location:** Supporting evidence justifies the city assigned to the address.
+
+### 2.1 Capture a Roblox game-instance IP address
 
 1. Join a Roblox experience and wait for the game instance to connect.
 2. Focus the Roblox game window and press **Ctrl+Shift+F3**.
@@ -16,7 +40,7 @@ The diagnostic address is the primary evidence that an IP was used by a live gam
 
 <img width="671" height="296" alt="Roblox Ctrl+Shift+F3 diagnostic showing a datacenter IPv4 address" src="https://github.com/user-attachments/assets/7bd9fc48-1169-484a-a1a6-01e825cb8f1c" />
 
-## 2. Research the Roblox server IP location
+### 2.2 Research the Roblox server IP location
 
 1. Look up the exact game-instance IP on [iplocation.net](https://www.iplocation.net/).
 2. Review **Compare Results by Provider**.
@@ -35,7 +59,7 @@ Geolocation results are supporting evidence only. Provider agreement does not pr
 
 <img width="672" height="894" alt="Example iplocation.net results showing San Mateo as a reported location" src="https://github.com/user-attachments/assets/ac24ba6c-144e-42ec-8c71-123809fb80b6" />
 
-## 3. Measure Roblox server IP latency with Globalping
+### 2.3 Measure Roblox server IP latency with Globalping
 
 Use [Globalping](https://globalping.io/) to run ICMP tests from probes in the locations reported by the geolocation providers.
 
@@ -58,7 +82,7 @@ If the exact game-instance IP does not respond to ICMP, skip the ping test and r
 
 If you test a related address instead, identify it as a separate endpoint. For example, `ICMP=.3` may describe a related `.3` address when the game-instance address ends in `.33`. This is indirect location evidence, not a ping result for the instance IP.
 
-## 4. Check Roblox's edge-term hostname
+### 2.4 Check Roblox's edge-term hostname
 
 Look for a Roblox hostname matching this pattern:
 
@@ -80,9 +104,9 @@ A matching hostname is the final 1% of the location-confidence assessment only w
 
 A missing hostname, a hostname that does not resolve to the exact IP, or a hostname with a conflicting location does not earn the hostname point.
 
-## 5. Submit evidence for review
+### 2.5 Submit a verified-entry proposal
 
-Open a [GitHub issue](https://github.com/Maneetbal/roblox-server-locations/issues) before proposing a new verified entry. Include:
+Open a [GitHub issue](https://github.com/Maneetbal/roblox-server-locations/issues) and state that you are requesting **verified-list consideration**. Include:
 
 - Exact Ctrl+Shift+F3 diagnostic line and observation date.
 - Screenshot of the diagnostic output.
@@ -91,9 +115,9 @@ Open a [GitHub issue](https://github.com/Maneetbal/roblox-server-locations/issue
 - Roblox `edge-term4` hostname, DNS A-record result, and lookup date, if one is found. State explicitly when no exact match is found.
 - Proposed country, city/region, and CIDR range, if known.
 
-Do not add an observation to the verified list until it has been reviewed.
+Do not add an observation to the verified list until it has been reviewed. If you are only suggesting an IP for the general list, use the simpler contribution process in Section 1 instead.
 
-## Entry format
+## Verified-list entry format
 
 The verification ledger uses this format, with the hostname appended after the instance and ICMP fields when an exact matching hostname has been verified:
 
@@ -110,7 +134,7 @@ United States
 - Omit the `Hostname=` field when no qualifying exact-IP hostname match has been verified.
 - Use `ICMP=No response` when the exact address does not answer ICMP and no related endpoint is being reported.
 
-## Confidence ratings
+## Verified-list confidence ratings
 
 Use a whole-number rating from 0 to 100. Confidence is a maintainer's assessment of the reliability of the listed **location**, not an accuracy percentage, probability, or guarantee.
 
@@ -127,6 +151,8 @@ The 95% and 90% latency tiers take precedence over the 99% and 100% tiers. A mat
 
 ## Network classification
 
+These checks are useful when proposing or reviewing entries for the general IP lists:
+
 - Put ranges registered to Roblox in `roblox-ips.txt`. Verify registration using the relevant Regional Internet Registry (RIR) RDAP service.
 - If a Roblox-registered range is hosted on AWS, classify it by registrant and note its AWS hosting where relevant.
 - For AWS-owned ranges, compare the prefix with the [AWS public IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json). The [AWS geolocation feed](https://ip-ranges.amazonaws.com/geo-ip-feed.csv) may be used as a location reference.
@@ -138,9 +164,9 @@ The 95% and 90% latency tiers take precedence over the 99% and 100% tiers. A mat
 When an approved change is made:
 
 1. Update the relevant source list and `all-ips.txt`.
-2. Update `roblox-verified-ips.txt` when verified game-instance evidence changes.
+2. Update `roblox-verified-ips.txt` only when verified game-instance evidence changes.
 3. Keep the README and file dates consistent with the data.
 4. Remove duplicates only when they represent the same network entry and purpose.
 5. Reassess entries when new evidence conflicts with the existing location or classification.
 
-Keep changes focused and include the supporting evidence in the issue or commit description.
+Keep changes focused and include whatever supporting evidence is available in the issue or commit description. Full verification evidence is required only for additions or changes to `roblox-verified-ips.txt`.
