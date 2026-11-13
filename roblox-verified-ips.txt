@@ -27,12 +27,12 @@ United States
   - 128.116.1.0/24 (Confidence=75) (ICMP=No response) (Instance=.33)
 
 - Miami, FL
-  - 128.116.45.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
-  - 128.116.127.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.45.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-mia4.roblox.com)
+  - 128.116.127.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-mia2.roblox.com)
 
 - New York City, NY
-  - 128.116.32.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
-  - 128.116.30.3 (Confidence=95) (ICMP=.3) (Instance=.33)
+  - 128.116.32.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lga2.roblox.com)
+  - 128.116.30.3 (Confidence=95) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lga4.roblox.com)
 
 - San Jose, CA (Reserved)
   - 128.116.117.0/24 (Confidence=70) (ICMP=No response) (Instance=.33)
@@ -46,52 +46,52 @@ United States
 Australia
 ---------
 - Sydney, AU
-  - 128.116.51.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.51.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-syd1.roblox.com)
 
 Brazil
 ------
 - Sao Paulo, BR
-  - 128.116.86.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.86.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-gru1.roblox.com)
 
 France
 ------
 - Paris, FR
-  - 128.116.13.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.13.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-cdg2.roblox.com)
 
 Germany
 -------
 - Frankfurt, DE
-  - 128.116.5.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
-  - 128.116.44.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.5.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-fra2.roblox.com)
+  - 128.116.44.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-fra4.roblox.com)
 
 India
 -----
 - Mumbai, IN
-  - 128.116.47.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.47.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-bom2.roblox.com)
 
 Japan
 -----
 - Tokyo, JP
   - 128.116.55.0/24 (Confidence=70) (ICMP=No response) (Instance=.33)
-  - 128.116.120.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.120.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-nrt2.roblox.com)
 
 Netherlands
 -----------
 - Amsterdam, NL
-  - 128.116.21.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.21.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-ams2.roblox.com)
 
 Singapore
 ---------
 - Singapore, SG
-  - 128.116.46.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
-  - 128.116.50.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
-  - 128.116.54.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
-  - 128.116.97.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.46.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sin6c2.roblox.com)
+  - 128.116.50.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sin4.roblox.com)
+  - 128.116.54.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sin6.roblox.com)
+  - 128.116.97.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-sin2.roblox.com)
 
 United Kingdom
 --------------
 - London, UK
-  - 128.116.31.0/24 (Confidence=99) (ICMP=.3) (Instance=.33)
+  - 128.116.31.0/24 (Confidence=99) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lhr4.roblox.com)
 
 Confidence refers to how reliable the listed location is. It does not indicate confidence in the ICMP endpoint or the game-instance IP observation.
 
@@ -100,3 +100,5 @@ Confidence refers to how reliable the listed location is. It does not indicate c
 **Hostname note:** The newly discovered `edge-term4` DNS A records resolve to the tested `.3` ICMP endpoints, not to the assumed `.33` instance addresses. Therefore, no new `Hostname=` fields have been added. The hostname matches support the ICMP endpoint/location evidence only.
 
 **Confidence-rule migration note:** The original entries retain their previously recorded ratings. The new confidence rules require an exact `edge-term4-<identifier>.roblox.com` DNS A-record match to the evaluated game-instance IP for a 100% rating. The repository does not currently record that hostname evidence for the original entries, so their 100% ratings must be rechecked before being treated as verified under the new rules. Do not infer an exact hostname match from an ICMP endpoint or from another address in the same /24.
+
+**Hostname mapping note:** `Hostname=` records the exact `edge-term4` DNS A-record match for the tested `.3` ICMP endpoint in the listed range. These hostnames identify the ICMP endpoint/location evidence; they do not independently verify the assumed `.33` game-instance address.
