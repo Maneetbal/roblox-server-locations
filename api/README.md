@@ -2,7 +2,7 @@
 
 Endpoint:
 
-`https://maneetbal.github.io/roblox-server-locations/api/v1/database.json`
+`https://raw.githubusercontent.com/Maneetbal/roblox-server-locations/api/v1/database.json`
 
 The response is a compact, minified JSON array generated from **[`all-ips.txt`](../all-ips.txt)**. Every record contains exactly these six fields:
 
@@ -26,6 +26,6 @@ The API includes the Roblox-associated and AWS-associated ranges in `all-ips.txt
 
 The response is a static array, not a server-side IP query endpoint. Voidstrap should download and cache it, then match an address against the listed IP/CIDR ranges locally.
 
-The database is rebuilt by GitHub Actions whenever `all-ips.txt`, the generator, or the deployment workflow changes on `main`.
+The JSON file is stored on the `api` branch. When `all-ips.txt` changes, regenerate and publish `v1/database.json` to keep this endpoint current.
 
 Unofficial community project; not affiliated with Roblox.
