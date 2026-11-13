@@ -26,6 +26,6 @@ The API includes the Roblox-associated and AWS-associated ranges in `all-ips.txt
 
 The response is a static array, not a server-side IP query endpoint. Voidstrap should download and cache it, then match an address against the listed IP/CIDR ranges locally.
 
-The JSON file is stored on the `api` branch. When `all-ips.txt` changes, regenerate and publish `v1/database.json` to keep this endpoint current.
+GitHub Actions automatically regenerates and publishes `v1/database.json` to the `api` branch whenever `all-ips.txt` changes on `main`. You can also run the **Publish raw JSON API** workflow manually.
 
 Unofficial community project; not affiliated with Roblox.
