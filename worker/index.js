@@ -154,7 +154,7 @@ export default {
 
       if (entry) {
         return json({
-          api: "database",
+          api: "local",
           ip: requestedIP,
           city: entry.city,
           region: entry.region,
