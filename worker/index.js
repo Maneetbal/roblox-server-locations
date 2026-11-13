@@ -61,12 +61,17 @@ async function getExternalLocation(ip) {
   // Prefer IP2Location.io's keyless API (up to 1,000 requests/day).
   try {
     const response = await fetch(
-      `https://api.ip2location.io/?ip=${encodeURIComponent(ip)}`,
+      `https://api.ip2location.io/?ip=${encodeURIComponent(ip)}&format=json`,
       { cf: { cacheTtl: 3600, cacheEverything: true } }
     );
 
-    if (response.ok) {
+    if (!response.ok) {
+      console.warn("IP2Location HTTP error:", response.status);
+    } else {
       const data = await response.json();
+      if (data.error) {
+        console.warn("IP2Location API error:", JSON.stringify(data.error));
+      }
       if (data.ip && !data.error) {
         const asn = data.asn ? `AS${data.asn}` : "";
         const org = [asn, data.as, data.isp].filter(Boolean).join(" ");
@@ -86,8 +91,8 @@ async function getExternalLocation(ip) {
         };
       }
     }
-  } catch {
-    // Try IPinfo if IP2Location is unavailable.
+  } catch (error) {
+    console.warn("IP2Location request failed:", String(error));
   }
 
   // Keyless IPinfo legacy endpoint; limited to 1,000 requests/day.
