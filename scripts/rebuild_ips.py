@@ -186,7 +186,7 @@ def main():
     for city, country in keys:
         value = cache["locations"].get(f"{city}|{country}")
         if (isinstance(value, dict) and isinstance(value.get("region"), str)
-                and value["region"].strip() and isinstance(value.get("loc"), str)):
+                and isinstance(value.get("loc"), str) and value["loc"]):
             locations[(city, country)] = (value["region"], value["loc"])
 
     missing = keys - locations.keys()
@@ -208,9 +208,26 @@ def main():
     else:
         print(f"Loaded all {len(locations)} geocoding results from cache.")
 
+    country_codes = {
+        "United States": "US", "Argentina": "AR", "Brazil": "BR", "Chile": "CL",
+        "Germany": "DE", "Greece": "GR", "India": "IN", "Indonesia": "ID",
+        "Ireland": "IE", "Israel": "IL", "Italy": "IT", "Japan": "JP",
+        "Malaysia": "MY", "Mexico": "MX", "Peru": "PE", "Poland": "PL",
+        "Singapore": "SG", "South Africa": "ZA", "Switzerland": "CH",
+        "Turkey": "TR", "Australia": "AU", "France": "FR", "Netherlands": "NL",
+        "United Kingdom": "GB",
+    }
     for item in records:
-        item["region"], item["loc"] = locations[(item["geo_city"], item["country"])]
+        item["region"], coords = locations[(item["geo_city"], item["country"])]
+        lat, lon = map(float, coords.split(","))
+        item["loc"] = f"{lat:.4f},{lon:.4f}"
+        item["country"] = country_codes[item["country"]]
         del item["geo_city"]
+        item["region"] = item["region"]
+    records = [{
+        "cdir": x["cdir"], "city": x["city"], "region": x["region"],
+        "country": x["country"], "loc": x["loc"], "org": x["org"]
+    } for x in records]
     records.sort(key=lambda x: (int(ip.ip_network(x["cdir"]).network_address),
                                 ip.ip_network(x["cdir"]).prefixlen, x["org"]))
     if len(records) < 10:
@@ -218,7 +235,10 @@ def main():
 
     Path("aws-ips.txt").write_text(aws_text, encoding="utf-8")
     Path("all-ips.txt").write_text(all_text, encoding="utf-8")
-    Path("database.json").write_text(json.dumps(records, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    database = "[\n" + ",\n".join(
+        json.dumps(item, indent=2, ensure_ascii=False) for item in records
+    ) + "\n]\n"
+    Path("database.json").write_text(database, encoding="utf-8")
     print(f"Built {aws_count} AWS ranges, {ping_count} pingable IPs, and {len(records)} database records; syncToken={aws['syncToken']}")
 
 if __name__ == "__main__":
