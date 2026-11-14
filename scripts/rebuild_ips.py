@@ -15,6 +15,7 @@ AWS = "https://ip-ranges.amazonaws.com/ip-ranges.json"
 REACH = "http://ec2-reachability.amazonaws.com/prefixes-ipv4.json"
 GEO = "https://photon.komoot.io/api/"
 NOMINATIM = "https://nominatim.openstreetmap.org/search"
+CACHE_FILE = Path("geocode-cache.json")
 _geo_lock = threading.Lock()
 _last_nominatim = 0
 LOCATIONS = [
@@ -169,8 +170,36 @@ def main():
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
     keys = {(x["city"], x["country"]) for x in records}
-    with ThreadPoolExecutor(2) as pool:
-        locations = dict(f.result() for f in (pool.submit(geocode, key) for key in keys))
+    cache = {"version": 1, "locations": {}}
+    if CACHE_FILE.exists():
+        try:
+            loaded = json.loads(CACHE_FILE.read_text(encoding="utf-8"))
+            if isinstance(loaded, dict) and isinstance(loaded.get("locations"), dict):
+                cache = loaded
+        except (OSError, json.JSONDecodeError):
+            print("Geocode cache unreadable; rebuilding it.")
+
+    locations = {}
+    for city, country in keys:
+        value = cache["locations"].get(f"{city}|{country}")
+        if (isinstance(value, dict) and isinstance(value.get("region"), str)
+                and isinstance(value.get("loc"), str)):
+            locations[(city, country)] = (value["region"], value["loc"])
+
+    missing = keys - locations.keys()
+    if missing:
+        print(f"Geocoding {len(missing)} uncached locations; {len(locations)} loaded from cache.")
+        with ThreadPoolExecutor(2) as pool:
+            fresh = dict(f.result() for f in (pool.submit(geocode, key) for key in missing))
+        locations.update(fresh)
+        for (city, country), (state, coords) in fresh.items():
+            cache["locations"][f"{city}|{country}"] = {"region": state, "loc": coords}
+        CACHE_FILE.write_text(
+            json.dumps(cache, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8"
+        )
+    else:
+        print(f"Loaded all {len(locations)} geocoding results from cache.")
+
     for item in records:
         item["region"], item["loc"] = locations[(item["city"], item["country"])]
     records.sort(key=lambda x: (int(ip.ip_network(x["cidr"]).network_address),
