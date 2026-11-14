@@ -19,7 +19,7 @@ function parseIPv4(value) {
   if (parts.length !== 4) return null;
   let result = 0;
   for (const part of parts) {
-    if (!/^\\d{1,3}$/.test(part)) return null;
+    if (!/^\d{1,3}$/.test(part)) return null;
     const octet = Number(part);
     if (octet > 255) return null;
     result = ((result << 8) | octet) >>> 0;
@@ -82,7 +82,7 @@ function parseDatabase(text) {
 
     if (inString) {
       if (escaped) escaped = false;
-      else if (char === "\\\\") escaped = true;
+      else if (char === "\\") escaped = true;
       else if (char === '"') inString = false;
       continue;
     }
@@ -172,7 +172,7 @@ export default {
       }
     }
 
-    const match = url.pathname.match(/^\\/([^/]+)\\/json\\/?$/);
+    const match = url.pathname.match(/^\/([^/]+)\/json\/?$/);
     if (!match) return json({ error: "Use /{ip}/json" }, 400);
 
     let requestedIP;
