@@ -7,7 +7,7 @@ import threading
 import urllib.error
 import urllib.parse
 import urllib.request
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -45,17 +45,17 @@ LOCATIONS = [
     ("Turkey", "Istanbul, TR", "eu-central-1-ist-1"),
 ]
 
-def fetch(url):
+def fetch(url, timeout=40, attempts=6):
     req = urllib.request.Request(url, headers={"User-Agent": "roblox-server-locations/1.0"})
-    for attempt in range(6):
+    for attempt in range(attempts):
         try:
-            with urllib.request.urlopen(req, timeout=40) as r:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.load(r)
         except urllib.error.HTTPError as e:
-            if e.code not in (429, 500, 502, 503, 504) or attempt == 5:
+            if e.code not in (429, 500, 502, 503, 504) or attempt == attempts - 1:
                 raise
         except urllib.error.URLError:
-            if attempt == 5:
+            if attempt == attempts - 1:
                 raise
         time.sleep(min(2 ** attempt, 20))
 
@@ -86,7 +86,7 @@ def geocode(key):
     city, country = key
     url = GEO + "?" + urllib.parse.urlencode({"q": f"{city}, {country}", "limit": 1})
     try:
-        feature = fetch(url).get("features", [])
+        feature = fetch(url, timeout=8, attempts=1).get("features", [])
         if feature:
             p = feature[0].get("properties", {})
             lon, lat = feature[0]["geometry"]["coordinates"]
@@ -102,7 +102,7 @@ def geocode(key):
         fallback = NOMINATIM + "?" + urllib.parse.urlencode({
             "q": f"{city}, {country}", "format": "jsonv2", "limit": 1
         })
-        result = fetch(fallback)
+        result = fetch(fallback, timeout=12, attempts=1)
         _last_nominatim = time.monotonic()
     if not result:
         raise RuntimeError(f"Could not geocode {city}, {country} with Photon or Nominatim")
@@ -190,7 +190,12 @@ def main():
     if missing:
         print(f"Geocoding {len(missing)} uncached locations; {len(locations)} loaded from cache.")
         with ThreadPoolExecutor(2) as pool:
-            fresh = dict(f.result() for f in (pool.submit(geocode, key) for key in missing))
+            jobs = [pool.submit(geocode, key) for key in sorted(missing)]
+            fresh = {}
+            for done, future in enumerate(as_completed(jobs), 1):
+                key, value = future.result()
+                fresh[key] = value
+                print(f"Geocoded {done}/{len(jobs)}: {key[0]}, {key[1]}", flush=True)
         locations.update(fresh)
         for (city, country), (state, coords) in fresh.items():
             cache["locations"][f"{city}|{country}"] = {"region": state, "loc": coords}
