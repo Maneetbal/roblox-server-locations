@@ -1,4 +1,145 @@
 {
   "version": 1,
-  "locations": {}
+  "locations": {
+    "Ashburn|United States": {
+      "region": "Georgia",
+      "loc": "31.70598,-83.65356"
+    },
+    "Amsterdam|Netherlands": {
+      "region": "Noord-Holland",
+      "loc": "52.37308,4.89245"
+    },
+    "Athens|Greece": {
+      "region": "Αποκεντρωμένη Διοίκηση Αττικής",
+      "loc": "37.97556,23.73483"
+    },
+    "Atlanta|United States": {
+      "region": "Georgia",
+      "loc": "33.75447,-84.38982"
+    },
+    "Boardman|United States": {
+      "region": "Oregon",
+      "loc": "45.83986,-119.70058"
+    },
+    "Buenos Aires|Argentina": {
+      "region": "Ciudad Autónoma de Buenos Aires",
+      "loc": "-34.60956,-58.38879"
+    },
+    "Chicago|United States": {
+      "region": "Illinois",
+      "loc": "41.87556,-87.62442"
+    },
+    "Columbus|United States": {
+      "region": "Ohio",
+      "loc": "39.96226,-83.00071"
+    },
+    "Cape Town|South Africa": {
+      "region": "",
+      "loc": "-33.92883,18.41722"
+    },
+    "Dallas|United States": {
+      "region": "",
+      "loc": "32.77627,-96.79686"
+    },
+    "Frankfurt|Germany": {
+      "region": "Hessen",
+      "loc": "50.11064,8.68209"
+    },
+    "Istanbul|Turkey": {
+      "region": "İstanbul",
+      "loc": "41.00638,28.97587"
+    },
+    "Dublin|Ireland": {
+      "region": "",
+      "loc": "53.34938,-6.26056"
+    },
+    "Jakarta|Indonesia": {
+      "region": "Jawa",
+      "loc": "-6.17540,106.82717"
+    },
+    "Kuala Lumpur|Malaysia": {
+      "region": "",
+      "loc": "3.15170,101.69424"
+    },
+    "Lima|Peru": {
+      "region": "",
+      "loc": "-12.04598,-77.03059"
+    },
+    "London|United Kingdom": {
+      "region": "",
+      "loc": "51.50745,-0.12777"
+    },
+    "Los Angeles|United States": {
+      "region": "",
+      "loc": "34.05369,-118.24277"
+    },
+    "Miami|United States": {
+      "region": "",
+      "loc": "25.77416,-80.19360"
+    },
+    "Milan|Italy": {
+      "region": "",
+      "loc": "45.46419,9.18963"
+    },
+    "Mumbai|India": {
+      "region": "",
+      "loc": "19.05500,72.86920"
+    },
+    "New York City|United States": {
+      "region": "",
+      "loc": "40.71273,-74.00602"
+    },
+    "Osaka|Japan": {
+      "region": "",
+      "loc": "34.69376,135.50145"
+    },
+    "Paris|France": {
+      "region": "",
+      "loc": "48.85889,2.32004"
+    },
+    "Queretaro|Mexico": {
+      "region": "",
+      "loc": "20.80522,-99.88374"
+    },
+    "San Jose|United States": {
+      "region": "",
+      "loc": "37.33617,-121.89059"
+    },
+    "Santiago|Chile": {
+      "region": "",
+      "loc": "-33.43770,-70.65107"
+    },
+    "Sao Paulo|Brazil": {
+      "region": "",
+      "loc": "-23.55065,-46.63338"
+    },
+    "Seattle|United States": {
+      "region": "",
+      "loc": "47.60383,-122.33006"
+    },
+    "Singapore|Singapore": {
+      "region": "",
+      "loc": "1.28992,103.85191"
+    },
+    "Sydney|Australia": {
+      "region": "",
+      "loc": "-33.86984,151.20828"
+    },
+    "Tel Aviv|Israel": {
+      "region": "",
+      "loc": "32.08530,34.78181"
+    },
+    "Tokyo|Japan": {
+      "region": "",
+      "loc": "35.67686,139.76389"
+    },
+    "Warsaw|Poland": {
+      "region": "",
+      "loc": "52.23196,21.00672"
+    },
+    "Zurich|Switzerland": {
+      "region": "",
+      "loc": "47.37445,8.54104"
+    }
+  }
 }
