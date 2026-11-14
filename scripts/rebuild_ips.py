@@ -136,13 +136,13 @@ def main():
     if not aws_count or not ping_count:
         raise RuntimeError(f"AWS validation failed: {aws_count} CIDRs, {ping_count} pingable IPs")
 
-    aws_text = "\\n".join(out).rstrip() + "\\n"
+    aws_text = "\n".join(out).rstrip() + "\n"
     roblox_text = Path("roblox-ips.txt").read_text(encoding="utf-8")
-    all_text = ("Combined Roblox and AWS Server IP Addresses\\n"
-                "============================================\\n"
-                f"Last updated: {today}\\n\\nAWS IP RANGES\\n==============\\n\\n"
-                + aws_text + "\\nROBLOX-REGISTERED IP RANGES\\n===========================\\n\\n"
-                + roblox_text.rstrip() + "\\n")
+    all_text = ("Combined Roblox and AWS Server IP Addresses\n"
+                "============================================\n"
+                f"Last updated: {today}\n\nAWS IP RANGES\n==============\n\n"
+                + aws_text + "\nROBLOX-REGISTERED IP RANGES\n===========================\n\n"
+                + roblox_text.rstrip() + "\n")
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
     keys = {(x["city"], x["country"]) for x in records}
@@ -157,7 +157,7 @@ def main():
 
     Path("aws-ips.txt").write_text(aws_text, encoding="utf-8")
     Path("all-ips.txt").write_text(all_text, encoding="utf-8")
-    Path("database.json").write_text(json.dumps(records, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    Path("database.json").write_text(json.dumps(records, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Built {aws_count} AWS ranges, {ping_count} pingable IPs, and {len(records)} database records; syncToken={aws['syncToken']}")
 
 if __name__ == "__main__":
