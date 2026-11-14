@@ -36,14 +36,50 @@ function matchesCIDR(ip, cidr) {
   return ((ip & mask) >>> 0) === ((network & mask) >>> 0);
 }
 
+function parseDatabase(text) {
+  const records = [];
+  let start = -1;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === '"') inString = false;
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+    } else if (char === "{") {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (char === "}") {
+      depth--;
+      if (depth < 0) throw new Error("Invalid database");
+      if (depth === 0 && start !== -1) {
+        records.push(JSON.parse(text.slice(start, i + 1)));
+        start = -1;
+      }
+    }
+  }
+
+  if (depth !== 0 || inString || !records.length) {
+    throw new Error("Invalid database");
+  }
+  return records;
+}
+
 async function getDatabase() {
   const response = await fetch(DATABASE_URL, {
     cf: { cacheTtl: 120, cacheEverything: true }
   });
   if (!response.ok) throw new Error("Database unavailable");
-  const data = await response.json();
-  if (!Array.isArray(data)) throw new Error("Invalid database");
-  return data;
+  return parseDatabase(await response.text());
 }
 
 async function getExternalLocation(ip) {
@@ -91,7 +127,7 @@ export default {
     try {
       const database = await getDatabase();
       const entry = database.find(item =>
-        typeof item.cidr === "string" && matchesCIDR(ip, item.cidr)
+        typeof item.cdir === "string" && matchesCIDR(ip, item.cdir)
       );
 
       if (entry) {
