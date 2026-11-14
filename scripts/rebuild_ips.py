@@ -90,7 +90,7 @@ def geocode(key):
         feature = fetch(url, timeout=8, attempts=1).get("features", [])
         if feature:
             p = feature[0].get("properties", {})
-            state = p.get("state") or p.get("county") or ""
+            state = p.get("state") or p.get("state_district") or p.get("county") or p.get("city") or p.get("district") or ""
             if state:
                 lon, lat = feature[0]["geometry"]["coordinates"]
                 return key, (state, f"{lat:.5f},{lon:.5f}")
@@ -111,9 +111,9 @@ def geocode(key):
         raise RuntimeError(f"Could not geocode {city}, {country} with Photon or Nominatim")
     item = result[0]
     address = item.get("address", {})
-    state = address.get("state") or address.get("state_district") or address.get("county") or ""
-    if not state.strip():
-        raise RuntimeError(f"Geocoder returned no region for {city}, {country}")
+    state = (address.get("state") or address.get("state_district") or address.get("county")
+             or address.get("municipality") or address.get("city") or address.get("town")
+             or address.get("village") or address.get("city_district") or city.split(",")[0])
     return key, (state.strip(), f"{float(item['lat']):.5f},{float(item['lon']):.5f}")
 def main():
     with ThreadPoolExecutor(2) as pool:
@@ -208,13 +208,14 @@ def main():
             for done, future in enumerate(as_completed(jobs), 1):
                 key, value = future.result()
                 fresh[key] = value
-                print(f"Geocoded {done}/{len(jobs)}: {key[0]}, {key[1]}", flush=True)
+                city, country = key
+                state, coords = value
+                cache["locations"][f"{city}|{country}"] = {"region": state, "loc": coords}
+                CACHE_FILE.write_text(
+                    json.dumps(cache, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+                )
+                print(f"Geocoded {done}/{len(jobs)}: {city}, {country}", flush=True)
         locations.update(fresh)
-        for (city, country), (state, coords) in fresh.items():
-            cache["locations"][f"{city}|{country}"] = {"region": state, "loc": coords}
-        CACHE_FILE.write_text(
-            json.dumps(cache, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-        )
     else:
         print(f"Loaded all {len(locations)} geocoding results from cache.")
 
