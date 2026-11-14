@@ -210,20 +210,10 @@ def main():
     else:
         print(f"Loaded all {len(locations)} geocoding results from cache.")
 
-    country_codes = {
-        "United States": "US", "Argentina": "AR", "Brazil": "BR", "Chile": "CL",
-        "Germany": "DE", "Greece": "GR", "India": "IN", "Indonesia": "ID",
-        "Ireland": "IE", "Israel": "IL", "Italy": "IT", "Japan": "JP",
-        "Malaysia": "MY", "Mexico": "MX", "Peru": "PE", "Poland": "PL",
-        "Singapore": "SG", "South Africa": "ZA", "Switzerland": "CH",
-        "Turkey": "TR", "Australia": "AU", "France": "FR", "Netherlands": "NL",
-        "United Kingdom": "GB",
-    }
     for item in records:
         item["region"], coords = locations[(item["geo_city"], item["country"])]
         lat, lon = map(float, coords.split(","))
         item["loc"] = f"{lat:.4f},{lon:.4f}"
-        item["country"] = country_codes[item["country"]]
         del item["geo_city"]
         item["region"] = item["region"]
     records = [{
