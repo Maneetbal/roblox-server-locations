@@ -79,7 +79,7 @@ def fetch(url):
         return json.load(response)
 
 def city_key(label):
-    label = re.sub(r"\\s*\\([^)]*\\)", "", label).strip()
+    label = re.sub(r"\s*\([^)]*\)", "", label).strip()
     return label.split(",")[0].strip().lower()
 
 def parse_list(path, org):
@@ -92,7 +92,7 @@ def parse_list(path, org):
         elif line.startswith("- ") and not line.startswith("  - "):
             city = line[2:].strip()
         elif line.startswith("  - ") and country and city:
-            match = re.match(r"\\s*-\\s*((?:\\d{1,3}\\.){3}\\d{1,3}(?:/\\d{1,2})?)", line)
+            match = re.match(r"\s*-\s*((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)", line)
             if not match:
                 continue
             try:
@@ -162,16 +162,16 @@ def main():
     if not aws_count or not ping_count:
         raise RuntimeError(f"AWS validation failed: {aws_count} CIDRs, {ping_count} pingable IPs")
 
-    aws_text = "\\n".join(out).rstrip() + "\\n"
+    aws_text = "\n".join(out).rstrip() + "\n"
     roblox_text = Path("roblox-ips.txt").read_text(encoding="utf-8")
     all_text = (
-        "Combined Roblox and AWS Server IP Addresses\\n"
-        "============================================\\n"
-        f"Last updated: {today}\\n\\n"
-        "AWS IP RANGES\\n==============\\n\\n"
-        + aws_text + "\\n"
-        + "ROBLOX-REGISTERED IP RANGES\\n===========================\\n\\n"
-        + roblox_text.rstrip() + "\\n"
+        "Combined Roblox and AWS Server IP Addresses\n"
+        "============================================\n"
+        f"Last updated: {today}\n\n"
+        "AWS IP RANGES\n==============\n\n"
+        + aws_text + "\n"
+        + "ROBLOX-REGISTERED IP RANGES\n===========================\n\n"
+        + roblox_text.rstrip() + "\n"
     )
     Path("aws-ips.txt").write_text(aws_text, encoding="utf-8")
     Path("all-ips.txt").write_text(all_text, encoding="utf-8")
@@ -181,7 +181,7 @@ def main():
         raise RuntimeError(f"Database validation failed: only {len(database)} records")
     database.sort(key=lambda item: (int(ip.ip_network(item["cidr"]).network_address),
                                     ip.ip_network(item["cidr"]).prefixlen, item["org"]))
-    Path("database.json").write_text(json.dumps(database, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    Path("database.json").write_text(json.dumps(database, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Built aws-ips.txt ({aws_count} AWS ranges, {ping_count} pingable endpoints), "
           f"all-ips.txt, and database.json ({len(database)} records); syncToken={aws['syncToken']}")
 
