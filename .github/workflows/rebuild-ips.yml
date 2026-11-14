@@ -1,0 +1,25 @@
+name: Rebuild IPs
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/rebuild_aws_ips.py
+      - name: Commit changes
+        run: |
+          git add aws-ips.txt all-ips.txt database.json
+          if git diff --cached --quiet; then
+            echo "IP files are already up to date."
+          else
+            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Rebuild IP databases"
+            git push
+          fi
