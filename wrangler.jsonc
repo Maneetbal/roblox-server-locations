@@ -1,8 +1,0 @@
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "roblox-server-locations",
-  "main": "worker/index.js",
-  "compatibility_date": "2026-11-12",
-  "workers_dev": true,
-  "previews": {}
-}
