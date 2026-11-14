@@ -174,7 +174,7 @@
       "loc": "-33.92883,18.41722"
     },
     "Dallas, TX|United States": {
-      "region": "",
+      "region": "Texas",
       "loc": "32.77627,-96.79686"
     },
     "Dublin, IE|Ireland": {
@@ -206,8 +206,8 @@
       "loc": "51.50002,-0.19244"
     },
     "Kuala Lumpur, MY|Malaysia": {
-      "region": "",
-      "loc": "3.13952,101.69377"
+      "region": "Kuala Lumpur",
+      "loc": "3.13958,101.69358"
     },
     "Los Angeles, CA|United States": {
       "region": "California",
@@ -222,35 +222,35 @@
       "loc": "19.05500,72.86920"
     },
     "Milan, IT|Italy": {
-      "region": "",
+      "region": "Lombardia",
       "loc": "45.46419,9.18963"
     },
     "New York City, NY|United States": {
-      "region": "",
+      "region": "New York",
       "loc": "40.71273,-74.00602"
     },
     "Osaka, JP|Japan": {
-      "region": "",
+      "region": "Osaka",
       "loc": "34.69376,135.50145"
     },
     "Paris, FR|France": {
-      "region": "",
-      "loc": "48.85889,2.32004"
+      "region": "Île-de-France",
+      "loc": "48.85350,2.34839"
     },
     "Queretaro, MX|Mexico": {
-      "region": "",
+      "region": "Queretaro",
       "loc": "20.59230,-100.39174"
     },
     "San Jose, CA|United States": {
-      "region": "",
+      "region": "California",
       "loc": "37.33617,-121.89059"
     },
     "Santiago, CL|Chile": {
-      "region": "",
+      "region": "Región Metropolitana de Santiago",
       "loc": "-33.43770,-70.65107"
     },
     "Sao Paulo, BR|Brazil": {
-      "region": "",
+      "region": "Sao Paulo",
       "loc": "-23.55065,-46.63338"
     },
     "Seattle, WA|United States": {
@@ -258,27 +258,27 @@
       "loc": "47.60383,-122.33006"
     },
     "Singapore, SG|Singapore": {
-      "region": "",
+      "region": "Singapore",
       "loc": "1.28838,103.83735"
     },
     "Sydney, AU|Australia": {
-      "region": "",
+      "region": "New South Wales",
       "loc": "-33.86984,151.20828"
     },
     "Tel Aviv, IL|Israel": {
-      "region": "",
+      "region": "מחוז תל אביב",
       "loc": "32.08530,34.78181"
     },
     "Tokyo, JP|Japan": {
-      "region": "",
+      "region": "Tokyo",
       "loc": "35.68125,139.76671"
     },
     "Warsaw, PL|Poland": {
-      "region": "",
+      "region": "województwo mazowieckie",
       "loc": "52.23196,21.00672"
     },
     "Zurich, CH|Switzerland": {
-      "region": "",
+      "region": "Zurich",
       "loc": "47.37445,8.54104"
     }
   }
