@@ -4,10 +4,12 @@ const DATABASE_URL =
 let databaseCache;
 let databaseCacheExpires = 0;
 let databasePromise;
-let lastLookupAt = 0;
+let lastGlobalLookupAt = 0;
+const lastUserLookupAt = new Map();
 
 const DATABASE_TTL = 120_000;
-const LOOKUP_INTERVAL = 500;
+const USER_LOOKUP_INTERVAL = 2_000;
+const GLOBAL_LOOKUP_INTERVAL = 1_000;
 
 const HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -212,9 +214,15 @@ export default {
     if (!version) return json({ error: "Invalid IP address" }, 400);
 
     const now = Date.now();
-    if (now - lastLookupAt < LOOKUP_INTERVAL) {
+    const userIP = request.headers.get("CF-Connecting-IP") || "unknown";
+    const lastUserLookup = lastUserLookupAt.get(userIP) || 0;
+
+    if (
+      now - lastUserLookup < USER_LOOKUP_INTERVAL ||
+      now - lastGlobalLookupAt < GLOBAL_LOOKUP_INTERVAL
+    ) {
       return new Response(
-        '<!doctype html><html><head><meta charset="utf-8"><script>setTimeout(() => location.reload(), 500)</script></head><body>error: 429</body></html>',
+        '<!doctype html><html><head><meta charset="utf-8"><script>setTimeout(() => location.reload(), 2000)</script></head><body>error: 429</body></html>',
         {
           status: 429,
           headers: {
@@ -224,7 +232,13 @@ export default {
         }
       );
     }
-    lastLookupAt = now;
+
+    lastUserLookupAt.set(userIP, now);
+    lastGlobalLookupAt = now;
+
+    for (const [ip, timestamp] of lastUserLookupAt) {
+      if (now - timestamp >= USER_LOOKUP_INTERVAL) lastUserLookupAt.delete(ip);
+    }
 
     try {
       const database = await getDatabase();
