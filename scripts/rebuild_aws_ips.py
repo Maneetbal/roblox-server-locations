@@ -2,19 +2,17 @@
 import ipaddress as ip
 import json
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
 AWS = "https://ip-ranges.amazonaws.com/ip-ranges.json"
 REACH = "http://ec2-reachability.amazonaws.com/prefixes-ipv4.json"
-OUT = Path("aws-ips.txt")
-
-# Country, city, [(AWS Region, NetworkBorderGroup)]
 LOCATIONS = [
     ("United States", "Ashburn, VA", [("us-east-1", "us-east-1")]),
     ("United States", "Boardman, OR", [("us-west-2", "us-west-2")]),
     ("United States", "Columbus, OH", [("us-east-2", "us-east-2")]),
-    ("United States", "Miami, FL", [("us-east-1", x) for x in ("us-east-1-mia-1", "us-east-1-mia-2", "us-east-1-wl1-mia-wlz-1")]),
+    ("United States", "Miami, FL", [("us-east-1", n) for n in ("us-east-1-mia-1", "us-east-1-mia-2", "us-east-1-wl1-mia-wlz-1")]),
     ("United States", "San Jose, CA", [("us-west-1", "us-west-1")]),
     ("Argentina", "Buenos Aires, AR", [("us-east-1", "us-east-1-bue-1")]),
     ("Brazil", "Sao Paulo, BR", [("sa-east-1", "sa-east-1")]),
@@ -38,71 +36,60 @@ LOCATIONS = [
 ]
 
 def fetch(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "roblox-server-locations-ip-updater"})
+    req = urllib.request.Request(url, headers={"User-Agent": "roblox-server-locations"})
     with urllib.request.urlopen(req, timeout=45) as r:
-        if r.status != 200:
-            raise RuntimeError(f"HTTP {r.status}: {url}")
         return json.load(r)
 
 def main():
-    aws, reach = fetch(AWS), fetch(REACH)
-    if not isinstance(aws.get("prefixes"), list) or not aws.get("syncToken"):
-        raise RuntimeError("Invalid AWS IP range feed")
-    if not isinstance(reach, list):
-        raise RuntimeError("Invalid AWS reachability feed")
+    with ThreadPoolExecutor(2) as pool:
+        aws, reach = (f.result() for f in (pool.submit(fetch, AWS), pool.submit(fetch, REACH)))
+    if not aws.get("syncToken") or not isinstance(aws.get("prefixes"), list) or not isinstance(reach, list):
+        raise RuntimeError("Invalid AWS feed")
 
-    pingable = {}
+    ping = {}
     for item in reach:
-        if not isinstance(item, dict):
-            continue
-        for region, values in item.items():
-            if region in pingable or not isinstance(values, dict):
-                continue
-            for value in values.values():
-                try:
-                    pingable[region] = str(ip.IPv4Address(value))
-                    break
-                except (ValueError, TypeError):
-                    pass
+        if isinstance(item, dict):
+            for region, values in item.items():
+                if region not in ping and isinstance(values, dict):
+                    for value in values.values():
+                        try:
+                            ping[region] = str(ip.IPv4Address(value))
+                            break
+                        except (ValueError, TypeError):
+                            pass
 
-    groups = {}
+    wanted = {pair for _, _, pairs in LOCATIONS for pair in pairs}
+    groups = {pair: set() for pair in wanted}
     for p in aws["prefixes"]:
-        try:
-            key = (p["region"], p["network_border_group"])
-            net = ip.IPv4Network(p["ip_prefix"], strict=False)
-            groups.setdefault(key, set()).add(net)
-        except (KeyError, ValueError, TypeError):
-            continue
+        key = (p.get("region"), p.get("network_border_group"))
+        if key in groups:
+            try:
+                groups[key].add(ip.IPv4Network(p["ip_prefix"], strict=False))
+            except (KeyError, ValueError, TypeError):
+                pass
 
-    lines = [
-        "AWS IP Ranges Associated with Roblox Servers",
-        "============================================",
-        f"Last updated: {datetime.now(timezone.utc):%Y-%m-%d}", "",
-    ]
+    out = ["AWS IP Ranges Associated with Roblox Servers", "============================================",
+           f"Last updated: {datetime.now(timezone.utc):%Y-%m-%d}", ""]
     aws_count = ping_count = 0
     for country, city, pairs in LOCATIONS:
-        lines += [country, "-" * len(country), f"- {city}"]
-        # Only standard region endpoints; never borrow across border groups.
+        out += [country, "-" * len(country), f"- {city}"]
         for region, nbg in pairs:
-            if region == nbg and region in pingable:
-                lines.append(f"  - {pingable[region]}/32 (PINGABLE)")
+            if region == nbg and region in ping:
+                out.append(f"  - {ping[region]}/32 (PINGABLE)")
                 ping_count += 1
                 break
-        # Collapse within each exact Region + NetworkBorderGroup only.
-        networks = set()
+        nets = set()
         for pair in pairs:
-            networks.update(ip.collapse_addresses(groups.get(pair, set())))
-        for net in sorted(networks, key=lambda n: (int(n.network_address), n.prefixlen)):
-            lines.append(f"  - {net} (AWS)")
+            nets.update(ip.collapse_addresses(groups[pair]))
+        for net in sorted(nets, key=lambda n: (int(n.network_address), n.prefixlen)):
+            out.append(f"  - {net} (AWS)")
             aws_count += 1
-        lines.append("")
+        out.append("")
 
-    if not aws_count:
-        raise RuntimeError("No AWS CIDRs matched; refusing to overwrite aws-ips.txt")
-    if not ping_count:
-        raise RuntimeError("No exact-region pingable endpoints matched; refusing to overwrite aws-ips.txt")
-    OUT.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
-    print(f"Generated {OUT}: {aws_count} AWS CIDRs, {ping_count} exact-region PINGABLE endpoints; syncToken={aws['syncToken']}")
+    if not aws_count or not ping_count:
+        raise RuntimeError(f"Feed validation failed: {aws_count} CIDRs, {ping_count} pingable IPs")
+    Path("aws-ips.txt").write_text("\n".join(out).rstrip() + "\n", encoding="utf-8")
+    print(f"Built {aws_count} CIDRs and {ping_count} PINGABLE IPs; syncToken={aws['syncToken']}")
 
 if __name__ == "__main__":
     main()
