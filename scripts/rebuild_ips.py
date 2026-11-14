@@ -133,7 +133,7 @@ def main():
                 + aws_text + "\\nROBLOX-REGISTERED IP RANGES\\n===========================\\n\\n"
                 + roblox_text.rstrip() + "\\n")
 
-    records = parse_list(aws_text, "Amazon AWS") + parse_list(roblox_text, "AS22697 Roblox")
+    records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
     keys = {(x["city"], x["country"]) for x in records}
     with ThreadPoolExecutor(8) as pool:
         locations = dict(f.result() for f in (pool.submit(geocode, key) for key in keys))
