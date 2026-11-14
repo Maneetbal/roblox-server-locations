@@ -195,7 +195,7 @@ def main():
         for (city, country), (state, coords) in fresh.items():
             cache["locations"][f"{city}|{country}"] = {"region": state, "loc": coords}
         CACHE_FILE.write_text(
-            json.dumps(cache, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8"
+            json.dumps(cache, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
     else:
         print(f"Loaded all {len(locations)} geocoding results from cache.")
