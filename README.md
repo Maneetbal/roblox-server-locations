@@ -17,7 +17,7 @@ Find **Roblox game server IP ranges**, estimated **Roblox server locations**, an
 
 ## JSON API
 
-The compact static JSON database is available at [`v1/database.json`](https://raw.githubusercontent.com/Maneetbal/roblox-server-locations/api/v1/database.json) on the `api` branch. It is generated from `all-ips.txt`; clients download and cache the array for local IPv4/CIDR matching.
+The compact static JSON database is available at [`database.json`](database.json) in the repository root. It is rebuilt alongside `aws-ips.txt` and `all-ips.txt` by the **Rebuild IPs** GitHub Actions workflow; clients download and cache the array for local IPv4/CIDR matching.
 
 
 ## How to identify a Roblox game-server IP
