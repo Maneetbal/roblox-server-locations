@@ -222,7 +222,7 @@ export default {
       now - lastGlobalLookupAt < GLOBAL_LOOKUP_INTERVAL
     ) {
       return new Response(
-        '<!doctype html><html><head><meta charset="utf-8"><script>setTimeout(() => location.reload(), 2000)</script></head><body>error: 429</body></html>',
+        '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Error 429</title><style>body{font-family:Arial,sans-serif;background:Canvas;color:CanvasText;margin:0;padding:40px}h1{font-size:24px;font-weight:500}p{color:GrayText;font-size:14px}</style><script>setTimeout(() => location.reload(), 2000)</script></head><body><h1>Error 429</h1><p>Too many requests. Please wait a moment.</p></body></html>',
         {
           status: 429,
           headers: {
