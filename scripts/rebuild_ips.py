@@ -73,7 +73,7 @@ def geocode(key):
         raise RuntimeError(f"Could not geocode {city}, {country}")
     p = feature[0].get("properties", {})
     lon, lat = feature[0]["geometry"]["coordinates"]
-    return key, p.get("state") or p.get("county") or "", f"{lat:.5f},{lon:.5f}"
+    return key, (p.get("state") or p.get("county") or "", f"{lat:.5f},{lon:.5f}")
 
 def main():
     with ThreadPoolExecutor(2) as pool:
