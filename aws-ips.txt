@@ -515,7 +515,7 @@ United States
   - 216.198.240.0/22 (AWS)
   - 216.198.252.0/22 (AWS)
   - 216.244.7.0/24 (AWS)
-- Boardman, OR (Reserved)
+- Boardman, OR
   - 1.178.1.0/24 (AWS)
   - 1.178.9.0/24 (AWS)
   - 1.178.65.0/24 (AWS)
