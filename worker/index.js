@@ -1,6 +1,14 @@
 const DATABASE_URL =
   "https://raw.githubusercontent.com/Maneetbal/roblox-server-locations/main/database.json";
 
+let databaseCache;
+let databaseCacheExpires = 0;
+let databasePromise;
+let lastLookupAt = 0;
+
+const DATABASE_TTL = 120_000;
+const LOOKUP_INTERVAL = 500;
+
 const HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "access-control-allow-origin": "*",
@@ -117,7 +125,22 @@ async function getDatabaseText() {
 }
 
 async function getDatabase() {
-  return parseDatabase(await getDatabaseText());
+  const now = Date.now();
+  if (databaseCache && now < databaseCacheExpires) return databaseCache;
+  if (databasePromise) return databasePromise;
+
+  databasePromise = (async () => {
+    const records = parseDatabase(await getDatabaseText());
+    databaseCache = records;
+    databaseCacheExpires = Date.now() + DATABASE_TTL;
+    return records;
+  })();
+
+  try {
+    return await databasePromise;
+  } finally {
+    databasePromise = null;
+  }
 }
 
 async function getExternalLocation(ip) {
@@ -187,6 +210,12 @@ export default {
     const version = ipv4 !== null ? 4 : ipv6 !== null ? 6 : 0;
     const ip = version === 4 ? ipv4 : ipv6;
     if (!version) return json({ error: "Invalid IP address" }, 400);
+
+    const now = Date.now();
+    if (now - lastLookupAt < LOOKUP_INTERVAL) {
+      return json({ error: "Rate limit exceeded. Try again in 500ms." }, 429);
+    }
+    lastLookupAt = now;
 
     try {
       const database = await getDatabase();
