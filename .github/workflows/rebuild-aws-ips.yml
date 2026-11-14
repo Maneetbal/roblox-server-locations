@@ -20,7 +20,9 @@ jobs:
       - name: Commit changes
         run: |
           git add aws-ips.txt
-          git diff --cached --quiet || {
+          if git diff --cached --quiet; then
+            echo "aws-ips.txt is already up to date."
+          else
             git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Rebuild AWS IP ranges"
             git push
-          }
+          fi
