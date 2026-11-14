@@ -54,9 +54,9 @@ def parse_list(text, org):
         if line and not line.startswith((" ", "-")) and i + 1 < len(lines) and re.fullmatch(r"-{3,}", lines[i + 1]):
             country = line.strip()
         elif line.startswith("- ") and not line.startswith("  - "):
-            city = re.sub(r"\\s*\\([^)]*\\)", "", line[2:]).split(",")[0].strip()
+            city = re.sub(r"\s*\\([^)]*\\)", "", line[2:]).split(",")[0].strip()
         elif line.startswith("  - ") and country and city:
-            m = re.match(r"\\s*-\\s*((?:\\d{1,3}\\.){3}\\d{1,3}(?:/\\d{1,2})?)", line)
+            m = re.match(r"\s*-\s*((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)", line)
             if m:
                 try:
                     records.append({"cidr": str(ip.ip_network(m[1], strict=False)),
