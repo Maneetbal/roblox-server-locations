@@ -2,6 +2,8 @@
 import ipaddress as ip
 import json
 import re
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -40,8 +42,17 @@ LOCATIONS = [
 
 def fetch(url):
     req = urllib.request.Request(url, headers={"User-Agent": "roblox-server-locations/1.0"})
-    with urllib.request.urlopen(req, timeout=40) as r:
-        return json.load(r)
+    for attempt in range(6):
+        try:
+            with urllib.request.urlopen(req, timeout=40) as r:
+                return json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code not in (429, 500, 502, 503, 504) or attempt == 5:
+                raise
+        except urllib.error.URLError:
+            if attempt == 5:
+                raise
+        time.sleep(min(2 ** attempt, 20))
 
 def region(nbg):
     return "-".join(nbg.split("-")[:3])
@@ -135,7 +146,7 @@ def main():
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
     keys = {(x["city"], x["country"]) for x in records}
-    with ThreadPoolExecutor(8) as pool:
+    with ThreadPoolExecutor(2) as pool:
         locations = dict(f.result() for f in (pool.submit(geocode, key) for key in keys))
     for item in records:
         item["region"], item["loc"] = locations[(item["city"], item["country"])]
