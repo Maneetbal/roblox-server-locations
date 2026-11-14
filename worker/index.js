@@ -4,10 +4,8 @@ const DATABASE_URL =
 let databaseCache;
 let databaseCacheExpires = 0;
 let databasePromise;
-let lastLookupAt = 0;
 
 const DATABASE_TTL = 120_000;
-const LOOKUP_INTERVAL = 500;
 
 const HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -210,12 +208,6 @@ export default {
     const version = ipv4 !== null ? 4 : ipv6 !== null ? 6 : 0;
     const ip = version === 4 ? ipv4 : ipv6;
     if (!version) return json({ error: "Invalid IP address" }, 400);
-
-    const now = Date.now();
-    if (now - lastLookupAt < LOOKUP_INTERVAL) {
-      return json({ error: "Rate limit exceeded. Try again in 500ms." }, 429);
-    }
-    lastLookupAt = now;
 
     try {
       const database = await getDatabase();
