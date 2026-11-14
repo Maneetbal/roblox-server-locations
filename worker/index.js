@@ -19,7 +19,7 @@ function parseIPv4(value) {
   if (parts.length !== 4) return null;
   let result = 0;
   for (const part of parts) {
-    if (!/^\d{1,3}$/.test(part)) return null;
+    if (!/^\\d{1,3}$/.test(part)) return null;
     const octet = Number(part);
     if (octet > 255) return null;
     result = ((result << 8) | octet) >>> 0;
@@ -27,13 +27,47 @@ function parseIPv4(value) {
   return result;
 }
 
-function matchesCIDR(ip, cidr) {
+function parseIPv6(value) {
+  if (!value || value.includes("%") || (value.match(/::/g) || []).length > 1) return null;
+
+  if (value.includes(".")) {
+    const lastColon = value.lastIndexOf(":");
+    if (lastColon < 0) return null;
+    const ipv4 = parseIPv4(value.slice(lastColon + 1));
+    if (ipv4 === null) return null;
+    value = value.slice(0, lastColon + 1) +
+      ((ipv4 >>> 16) & 0xffff).toString(16) + ":" +
+      (ipv4 & 0xffff).toString(16);
+  }
+
+  const compressed = value.includes("::");
+  const halves = value.split("::");
+  const left = halves[0] ? halves[0].split(":") : [];
+  const right = compressed && halves[1] ? halves[1].split(":") : [];
+  const missing = 8 - left.length - right.length;
+
+  if ((compressed && missing < 1) || (!compressed && missing !== 0)) return null;
+  const groups = [...left, ...Array(compressed ? missing : 0).fill("0"), ...right];
+  if (groups.length !== 8 || groups.some(group => !/^[0-9a-f]{1,4}$/i.test(group))) return null;
+
+  return groups.reduce((result, group) => (result << 16n) | BigInt("0x" + group), 0n);
+}
+
+function matchesCIDR(ip, cidr, version) {
   const [address, prefixText] = cidr.split("/");
-  const network = parseIPv4(address);
-  const prefix = prefixText === undefined ? 32 : Number(prefixText);
-  if (network === null || !Number.isInteger(prefix) || prefix < 0 || prefix > 32) return false;
-  const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
-  return ((ip & mask) >>> 0) === ((network & mask) >>> 0);
+  const bits = version === 4 ? 32 : 128;
+  const network = version === 4 ? parseIPv4(address) : parseIPv6(address);
+  const prefix = prefixText === undefined ? bits : Number(prefixText);
+
+  if (network === null || !Number.isInteger(prefix) || prefix < 0 || prefix > bits) return false;
+
+  if (version === 4) {
+    const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
+    return ((ip & mask) >>> 0) === ((network & mask) >>> 0);
+  }
+
+  const mask = prefix === 0 ? 0n : ((1n << BigInt(prefix)) - 1n) << BigInt(bits - prefix);
+  return (ip & mask) === (network & mask);
 }
 
 function parseDatabase(text) {
@@ -48,7 +82,7 @@ function parseDatabase(text) {
 
     if (inString) {
       if (escaped) escaped = false;
-      else if (char === "\\") escaped = true;
+      else if (char === "\\\\") escaped = true;
       else if (char === '"') inString = false;
       continue;
     }
@@ -74,12 +108,16 @@ function parseDatabase(text) {
   return records;
 }
 
-async function getDatabase() {
+async function getDatabaseText() {
   const response = await fetch(DATABASE_URL, {
     cf: { cacheTtl: 120, cacheEverything: true }
   });
   if (!response.ok) throw new Error("Database unavailable");
-  return parseDatabase(await response.text());
+  return response.text();
+}
+
+async function getDatabase() {
+  return parseDatabase(await getDatabaseText());
 }
 
 async function getExternalLocation(ip) {
@@ -117,17 +155,43 @@ export default {
 
     if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
 
-    const match = url.pathname.match(/^\/((?:\d{1,3}\.){3}\d{1,3})\/json\/?$/);
+    if (url.pathname === "/") {
+      return Response.redirect(new URL("/database.json", url), 302);
+    }
+
+    if (url.pathname === "/database.json") {
+      try {
+        return new Response(await getDatabaseText(), {
+          headers: {
+            ...HEADERS,
+            "cache-control": "public, max-age=120"
+          }
+        });
+      } catch {
+        return json({ error: "Could not load database" }, 502);
+      }
+    }
+
+    const match = url.pathname.match(/^\\/([^/]+)\\/json\\/?$/);
     if (!match) return json({ error: "Use /{ip}/json" }, 400);
 
-    const requestedIP = match[1];
-    const ip = parseIPv4(requestedIP);
-    if (ip === null) return json({ error: "Invalid IPv4 address" }, 400);
+    let requestedIP;
+    try {
+      requestedIP = decodeURIComponent(match[1]);
+    } catch {
+      return json({ error: "Invalid IP address" }, 400);
+    }
+
+    const ipv4 = parseIPv4(requestedIP);
+    const ipv6 = ipv4 === null ? parseIPv6(requestedIP) : null;
+    const version = ipv4 !== null ? 4 : ipv6 !== null ? 6 : 0;
+    const ip = version === 4 ? ipv4 : ipv6;
+    if (!version) return json({ error: "Invalid IP address" }, 400);
 
     try {
       const database = await getDatabase();
       const entry = database.find(item =>
-        typeof item.cdir === "string" && matchesCIDR(ip, item.cdir)
+        typeof item.cdir === "string" && matchesCIDR(ip, item.cdir, version)
       );
 
       if (entry) {
