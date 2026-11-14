@@ -17,7 +17,7 @@ jobs:
       - run: python3 scripts/rebuild_ips.py
       - name: Commit changes
         run: |
-          git add aws-ips.txt all-ips.txt database.json geocode-cache.json
+          git add aws-ips.txt all-ips.txt database.json scripts/cache.json
           if git diff --cached --quiet; then
             echo "IP files are already up to date."
           else
