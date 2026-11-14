@@ -112,7 +112,9 @@ def geocode(key):
     item = result[0]
     address = item.get("address", {})
     state = address.get("state") or address.get("state_district") or address.get("county") or ""
-    return key, (state, f"{float(item['lat']):.5f},{float(item['lon']):.5f}")
+    if not state.strip():
+        raise RuntimeError(f"Geocoder returned no region for {city}, {country}")
+    return key, (state.strip(), f"{float(item['lat']):.5f},{float(item['lon']):.5f}")
 def main():
     with ThreadPoolExecutor(2) as pool:
         aws, reach = (f.result() for f in (pool.submit(fetch, AWS), pool.submit(fetch, REACH)))
@@ -184,12 +186,18 @@ def main():
 
     locations = {}
     for city, country in keys:
-        value = cache["locations"].get(f"{city}|{country}")
-        if not isinstance(value, dict):
-            value = cache["locations"].get(f"{city.split(',')[0].strip()}|{country}")
-        if (isinstance(value, dict) and isinstance(value.get("region"), str)
-                and isinstance(value.get("loc"), str) and value["loc"]):
-            locations[(city, country)] = (value["region"], value["loc"])
+        candidates = (
+            cache["locations"].get(f"{city}|{country}"),
+            cache["locations"].get(f"{city.split(',')[0].strip()}|{country}"),
+        )
+        value = next((
+            item for item in candidates
+            if isinstance(item, dict)
+            and isinstance(item.get("region"), str) and item["region"].strip()
+            and isinstance(item.get("loc"), str) and item["loc"]
+        ), None)
+        if value:
+            locations[(city, country)] = (value["region"].strip(), value["loc"])
 
     missing = keys - locations.keys()
     if missing:
