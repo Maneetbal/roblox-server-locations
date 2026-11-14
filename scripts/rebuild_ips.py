@@ -185,6 +185,8 @@ def main():
     locations = {}
     for city, country in keys:
         value = cache["locations"].get(f"{city}|{country}")
+        if not isinstance(value, dict):
+            value = cache["locations"].get(f"{city.split(',')[0].strip()}|{country}")
         if (isinstance(value, dict) and isinstance(value.get("region"), str)
                 and isinstance(value.get("loc"), str) and value["loc"]):
             locations[(city, country)] = (value["region"], value["loc"])
