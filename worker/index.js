@@ -4,8 +4,10 @@ const DATABASE_URL =
 let databaseCache;
 let databaseCacheExpires = 0;
 let databasePromise;
+let lastLookupAt = 0;
 
 const DATABASE_TTL = 120_000;
+const LOOKUP_INTERVAL = 500;
 
 const HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -208,6 +210,21 @@ export default {
     const version = ipv4 !== null ? 4 : ipv6 !== null ? 6 : 0;
     const ip = version === 4 ? ipv4 : ipv6;
     if (!version) return json({ error: "Invalid IP address" }, 400);
+
+    const now = Date.now();
+    if (now - lastLookupAt < LOOKUP_INTERVAL) {
+      return new Response(
+        '<!doctype html><html><head><meta charset="utf-8"><script>setTimeout(() => location.reload(), 500)</script></head><body>error: 429</body></html>',
+        {
+          status: 429,
+          headers: {
+            "content-type": "text/html; charset=utf-8",
+            "cache-control": "no-store"
+          }
+        }
+      );
+    }
+    lastLookupAt = now;
 
     try {
       const database = await getDatabase();
