@@ -237,9 +237,9 @@ def main():
 
     Path("aws-ips.txt").write_text(aws_text, encoding="utf-8")
     Path("all-ips.txt").write_text(all_text, encoding="utf-8")
-    database = "[\n" + ",\n".join(
+    database = "\n".join(
         json.dumps(item, indent=2, ensure_ascii=False) for item in records
-    ) + "\n]\n"
+    ) + "\n"
     Path("database.json").write_text(database, encoding="utf-8")
     print(f"Built {aws_count} AWS ranges, {ping_count} pingable IPs, and {len(records)} database records; syncToken={aws['syncToken']}")
 
