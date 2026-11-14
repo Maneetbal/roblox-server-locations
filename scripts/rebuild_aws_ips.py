@@ -100,14 +100,17 @@ def main():
                 lines.append(f"  - {pingable_by_region[region]}/32 (PINGABLE)")
                 total_pingable += 1
                 break
-        networks = []
+        # Collapse each exact Region + NetworkBorderGroup separately.
+        # Never combine adjacent ranges from different AWS location groups.
+        location_networks = set()
         for pair in pairs:
-            networks.extend(grouped.get(pair, []))
-        if networks:
-            collapsed = sorted(ipaddress.collapse_addresses(set(networks)), key=lambda n: (int(n.network_address), n.prefixlen))
-            for network in collapsed:
-                lines.append(f"  - {network} (AWS)")
-                total_aws += 1
+            pair_networks = grouped.get(pair, [])
+            if pair_networks:
+                for network in ipaddress.collapse_addresses(set(pair_networks)):
+                    location_networks.add(network)
+        for network in sorted(location_networks, key=lambda n: (int(n.network_address), n.prefixlen)):
+            lines.append(f"  - {network} (AWS)")
+            total_aws += 1
         lines.append("")
     if total_aws == 0:
         raise RuntimeError("No AWS CIDRs matched; refusing to overwrite aws-ips.txt")
