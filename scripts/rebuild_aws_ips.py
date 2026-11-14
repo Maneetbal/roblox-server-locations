@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-import ipaddress
+import ipaddress as ip
 import json
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-AWS_URL = "https://ip-ranges.amazonaws.com/ip-ranges.json"
-REACH_URL = "http://ec2-reachability.amazonaws.com/prefixes-ipv4.json"
+AWS = "https://ip-ranges.amazonaws.com/ip-ranges.json"
+REACH = "http://ec2-reachability.amazonaws.com/prefixes-ipv4.json"
 OUT = Path("aws-ips.txt")
 
-# Only exact AWS Region + NetworkBorderGroup pairs are included.
+# Country, city, [(AWS Region, NetworkBorderGroup)]
 LOCATIONS = [
     ("United States", "Ashburn, VA", [("us-east-1", "us-east-1")]),
     ("United States", "Boardman, OR", [("us-west-2", "us-west-2")]),
     ("United States", "Columbus, OH", [("us-east-2", "us-east-2")]),
-    ("United States", "Miami, FL", [("us-east-1", "us-east-1-mia-1"), ("us-east-1", "us-east-1-mia-2"), ("us-east-1", "us-east-1-wl1-mia-wlz-1")]),
+    ("United States", "Miami, FL", [("us-east-1", x) for x in ("us-east-1-mia-1", "us-east-1-mia-2", "us-east-1-wl1-mia-wlz-1")]),
     ("United States", "San Jose, CA", [("us-west-1", "us-west-1")]),
     ("Argentina", "Buenos Aires, AR", [("us-east-1", "us-east-1-bue-1")]),
     ("Brazil", "Sao Paulo, BR", [("sa-east-1", "sa-east-1")]),
@@ -37,87 +37,72 @@ LOCATIONS = [
     ("Turkey", "Istanbul, TR", [("eu-central-1", "eu-central-1-ist-1")]),
 ]
 
-def fetch_json(url):
+def fetch(url):
     req = urllib.request.Request(url, headers={"User-Agent": "roblox-server-locations-ip-updater"})
-    with urllib.request.urlopen(req, timeout=45) as response:
-        if response.status != 200:
-            raise RuntimeError(f"HTTP {response.status} from {url}")
-        return json.load(response)
+    with urllib.request.urlopen(req, timeout=45) as r:
+        if r.status != 200:
+            raise RuntimeError(f"HTTP {r.status}: {url}")
+        return json.load(r)
 
 def main():
-    aws = fetch_json(AWS_URL)
+    aws, reach = fetch(AWS), fetch(REACH)
     if not isinstance(aws.get("prefixes"), list) or not aws.get("syncToken"):
-        raise RuntimeError("AWS IP range feed failed validation")
-    reach_data = fetch_json(REACH_URL)
-    if not isinstance(reach_data, list):
-        raise RuntimeError("AWS reachability feed failed validation")
+        raise RuntimeError("Invalid AWS IP range feed")
+    if not isinstance(reach, list):
+        raise RuntimeError("Invalid AWS reachability feed")
 
-    # Keep one valid IPv4 endpoint per exact AWS region key.
-    pingable_by_region = {}
-    for item in reach_data:
+    pingable = {}
+    for item in reach:
         if not isinstance(item, dict):
             continue
-        for region, prefixes in item.items():
-            if not isinstance(prefixes, dict) or region in pingable_by_region:
+        for region, values in item.items():
+            if region in pingable or not isinstance(values, dict):
                 continue
-            for address in prefixes.values():
+            for value in values.values():
                 try:
-                    ip = ipaddress.IPv4Address(address)
-                except (ipaddress.AddressValueError, TypeError):
-                    continue
-                pingable_by_region[region] = str(ip)
-                break
+                    pingable[region] = str(ip.IPv4Address(value))
+                    break
+                except (ValueError, TypeError):
+                    pass
 
-    grouped = {}
+    groups = {}
     for p in aws["prefixes"]:
-        region = p.get("region")
-        nbg = p.get("network_border_group")
-        cidr = p.get("ip_prefix")
-        if not region or not nbg or not cidr:
-            continue
         try:
-            network = ipaddress.IPv4Network(cidr, strict=False)
-        except ipaddress.AddressValueError:
+            key = (p["region"], p["network_border_group"])
+            net = ip.IPv4Network(p["ip_prefix"], strict=False)
+            groups.setdefault(key, set()).add(net)
+        except (KeyError, ValueError, TypeError):
             continue
-        grouped.setdefault((region, nbg), []).append(network)
 
     lines = [
         "AWS IP Ranges Associated with Roblox Servers",
         "============================================",
-        f"Last updated: {datetime.now(timezone.utc).strftime('%Y-%m-%d')}",
-        "",
+        f"Last updated: {datetime.now(timezone.utc):%Y-%m-%d}", "",
     ]
-    total_aws = 0
-    total_pingable = 0
+    aws_count = ping_count = 0
     for country, city, pairs in LOCATIONS:
-        lines.extend([country, "-" * len(country), f"- {city}"])
-        # Only show an endpoint when the reachability feed has the exact
-        # region AND the location is the region's standard border group.
-        # Special border groups (e.g. Istanbul, Athens, Miami) never borrow
-        # a generic regional endpoint from another location.
+        lines += [country, "-" * len(country), f"- {city}"]
+        # Only standard region endpoints; never borrow across border groups.
         for region, nbg in pairs:
-            if region == nbg and region in pingable_by_region:
-                lines.append(f"  - {pingable_by_region[region]}/32 (PINGABLE)")
-                total_pingable += 1
+            if region == nbg and region in pingable:
+                lines.append(f"  - {pingable[region]}/32 (PINGABLE)")
+                ping_count += 1
                 break
-        # Collapse each exact Region + NetworkBorderGroup separately.
-        # Never combine adjacent ranges from different AWS location groups.
-        location_networks = set()
+        # Collapse within each exact Region + NetworkBorderGroup only.
+        networks = set()
         for pair in pairs:
-            pair_networks = grouped.get(pair, [])
-            if pair_networks:
-                for network in ipaddress.collapse_addresses(set(pair_networks)):
-                    location_networks.add(network)
-        for network in sorted(location_networks, key=lambda n: (int(n.network_address), n.prefixlen)):
-            lines.append(f"  - {network} (AWS)")
-            total_aws += 1
+            networks.update(ip.collapse_addresses(groups.get(pair, set())))
+        for net in sorted(networks, key=lambda n: (int(n.network_address), n.prefixlen)):
+            lines.append(f"  - {net} (AWS)")
+            aws_count += 1
         lines.append("")
-    if total_aws == 0:
+
+    if not aws_count:
         raise RuntimeError("No AWS CIDRs matched; refusing to overwrite aws-ips.txt")
-    if total_pingable == 0:
+    if not ping_count:
         raise RuntimeError("No exact-region pingable endpoints matched; refusing to overwrite aws-ips.txt")
     OUT.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
-    print(f"Generated {OUT}: {total_aws} AWS CIDRs, {total_pingable} exact-region PINGABLE endpoints; AWS syncToken={aws['syncToken']}")
+    print(f"Generated {OUT}: {aws_count} AWS CIDRs, {ping_count} exact-region PINGABLE endpoints; syncToken={aws['syncToken']}")
 
 if __name__ == "__main__":
     main()
