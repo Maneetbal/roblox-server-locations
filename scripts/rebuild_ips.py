@@ -3,6 +3,7 @@ import ipaddress as ip
 import json
 import re
 import time
+import threading
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -13,6 +14,9 @@ from pathlib import Path
 AWS = "https://ip-ranges.amazonaws.com/ip-ranges.json"
 REACH = "http://ec2-reachability.amazonaws.com/prefixes-ipv4.json"
 GEO = "https://photon.komoot.io/api/"
+NOMINATIM = "https://nominatim.openstreetmap.org/search"
+_geo_lock = threading.Lock()
+_last_nominatim = 0
 LOCATIONS = [
     ("United States", "Ashburn, VA", "us-east-1"),
     ("United States", "Boardman, OR", "us-west-2"),
@@ -77,15 +81,34 @@ def parse_list(text, org):
     return records
 
 def geocode(key):
+    global _last_nominatim
     city, country = key
     url = GEO + "?" + urllib.parse.urlencode({"q": f"{city}, {country}", "limit": 1})
-    feature = fetch(url).get("features", [])
-    if not feature:
-        raise RuntimeError(f"Could not geocode {city}, {country}")
-    p = feature[0].get("properties", {})
-    lon, lat = feature[0]["geometry"]["coordinates"]
-    return key, (p.get("state") or p.get("county") or "", f"{lat:.5f},{lon:.5f}")
+    try:
+        feature = fetch(url).get("features", [])
+        if feature:
+            p = feature[0].get("properties", {})
+            lon, lat = feature[0]["geometry"]["coordinates"]
+            return key, (p.get("state") or p.get("county") or "", f"{lat:.5f},{lon:.5f}")
+    except urllib.error.URLError:
+        pass
 
+    # Use Nominatim if Photon is unavailable.
+    with _geo_lock:
+        delay = 1.1 - (time.monotonic() - _last_nominatim)
+        if delay > 0:
+            time.sleep(delay)
+        fallback = NOMINATIM + "?" + urllib.parse.urlencode({
+            "q": f"{city}, {country}", "format": "jsonv2", "limit": 1
+        })
+        result = fetch(fallback)
+        _last_nominatim = time.monotonic()
+    if not result:
+        raise RuntimeError(f"Could not geocode {city}, {country} with Photon or Nominatim")
+    item = result[0]
+    address = item.get("address", {})
+    state = address.get("state") or address.get("state_district") or address.get("county") or ""
+    return key, (state, f"{float(item['lat']):.5f},{float(item['lon']):.5f}")
 def main():
     with ThreadPoolExecutor(2) as pool:
         aws, reach = (f.result() for f in (pool.submit(fetch, AWS), pool.submit(fetch, REACH)))
