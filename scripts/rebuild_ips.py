@@ -46,10 +46,10 @@ def fetch(url):
 def region(nbg):
     return "-".join(nbg.split("-")[:3])
 
-def parse_list(path, org):
+def parse_list(text, org):
     country = city = None
     records = []
-    lines = Path(path).read_text(encoding="utf-8").splitlines()
+    lines = text.splitlines()
     for i, line in enumerate(lines):
         if line and not line.startswith((" ", "-")) and i + 1 < len(lines) and re.fullmatch(r"-{3,}", lines[i + 1]):
             country = line.strip()
@@ -68,12 +68,11 @@ def parse_list(path, org):
 def geocode(key):
     city, country = key
     url = GEO + "?" + urllib.parse.urlencode({"q": f"{city}, {country}", "limit": 1})
-    data = fetch(url)
-    features = data.get("features", [])
-    if not features:
+    feature = fetch(url).get("features", [])
+    if not feature:
         raise RuntimeError(f"Could not geocode {city}, {country}")
-    p = features[0].get("properties", {})
-    lon, lat = features[0]["geometry"]["coordinates"]
+    p = feature[0].get("properties", {})
+    lon, lat = feature[0]["geometry"]["coordinates"]
     return key, p.get("state") or p.get("county") or "", f"{lat:.5f},{lon:.5f}"
 
 def main():
@@ -94,7 +93,6 @@ def main():
                         except (ValueError, TypeError):
                             pass
 
-    wanted = {(region(n), n) for *_, groups in [] for n in groups}
     wanted = {(region(n), n) for row in LOCATIONS for n in row[2:]}
     groups = {key: set() for key in wanted}
     for p in aws["prefixes"]:
@@ -109,8 +107,7 @@ def main():
     out = ["AWS IP Ranges Associated with Roblox Servers", "============================================",
            f"Last updated: {today}", ""]
     aws_count = ping_count = 0
-    for row in LOCATIONS:
-        country, city, *nbgs = row
+    for country, city, *nbgs in LOCATIONS:
         out += [country, "-" * len(country), f"- {city}"]
         for n in nbgs:
             r = region(n)
@@ -136,7 +133,7 @@ def main():
                 + aws_text + "\\nROBLOX-REGISTERED IP RANGES\\n===========================\\n\\n"
                 + roblox_text.rstrip() + "\\n")
 
-    records = parse_list("aws-ips.txt", "Amazon AWS") + parse_list("roblox-ips.txt", "AS22697 Roblox")
+    records = parse_list(aws_text, "Amazon AWS") + parse_list(roblox_text, "AS22697 Roblox")
     keys = {(x["city"], x["country"]) for x in records}
     with ThreadPoolExecutor(8) as pool:
         locations = dict(f.result() for f in (pool.submit(geocode, key) for key in keys))
@@ -144,9 +141,9 @@ def main():
         item["region"], item["loc"] = locations[(item["city"], item["country"])]
     records.sort(key=lambda x: (int(ip.ip_network(x["cidr"]).network_address),
                                 ip.ip_network(x["cidr"]).prefixlen, x["org"]))
-
     if len(records) < 10:
         raise RuntimeError(f"Database validation failed: only {len(records)} records")
+
     Path("aws-ips.txt").write_text(aws_text, encoding="utf-8")
     Path("all-ips.txt").write_text(all_text, encoding="utf-8")
     Path("database.json").write_text(json.dumps(records, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
