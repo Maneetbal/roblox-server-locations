@@ -70,13 +70,14 @@ def parse_list(text, org):
         if line and not line.startswith((" ", "-")) and i + 1 < len(lines) and re.fullmatch(r"-{3,}", lines[i + 1]):
             country = line.strip()
         elif line.startswith("- ") and not line.startswith("  - "):
-            city = re.sub(r"\s*\([^)]*\)", "", line[2:]).split(",")[0].strip()
+            city = re.sub(r"\s*\([^)]*\)", "", line[2:]).strip()
         elif line.startswith("  - ") and country and city:
             m = re.match(r"\s*-\s*((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)", line)
             if m:
                 try:
-                    records.append({"cidr": str(ip.ip_network(m[1], strict=False)),
-                                    "city": city, "country": country, "org": org})
+                    records.append({"cdir": str(ip.ip_network(m[1], strict=False)),
+                                    "city": city.split(",")[0].strip(), "geo_city": city,
+                                    "country": country, "org": org})
                 except ValueError:
                     pass
     return records
@@ -89,12 +90,14 @@ def geocode(key):
         feature = fetch(url, timeout=8, attempts=1).get("features", [])
         if feature:
             p = feature[0].get("properties", {})
-            lon, lat = feature[0]["geometry"]["coordinates"]
-            return key, (p.get("state") or p.get("county") or "", f"{lat:.5f},{lon:.5f}")
+            state = p.get("state") or p.get("county") or ""
+            if state:
+                lon, lat = feature[0]["geometry"]["coordinates"]
+                return key, (state, f"{lat:.5f},{lon:.5f}")
     except urllib.error.URLError:
         pass
 
-    # Use Nominatim if Photon is unavailable.
+    # Use Nominatim when Photon is unavailable or has no region.
     with _geo_lock:
         delay = 1.1 - (time.monotonic() - _last_nominatim)
         if delay > 0:
@@ -169,7 +172,7 @@ def main():
                 + roblox_text.rstrip() + "\n")
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
-    keys = {(x["city"], x["country"]) for x in records}
+    keys = {(x["geo_city"], x["country"]) for x in records}
     cache = {"version": 1, "locations": {}}
     if CACHE_FILE.exists():
         try:
@@ -183,7 +186,7 @@ def main():
     for city, country in keys:
         value = cache["locations"].get(f"{city}|{country}")
         if (isinstance(value, dict) and isinstance(value.get("region"), str)
-                and isinstance(value.get("loc"), str)):
+                and value["region"].strip() and isinstance(value.get("loc"), str)):
             locations[(city, country)] = (value["region"], value["loc"])
 
     missing = keys - locations.keys()
@@ -206,9 +209,10 @@ def main():
         print(f"Loaded all {len(locations)} geocoding results from cache.")
 
     for item in records:
-        item["region"], item["loc"] = locations[(item["city"], item["country"])]
-    records.sort(key=lambda x: (int(ip.ip_network(x["cidr"]).network_address),
-                                ip.ip_network(x["cidr"]).prefixlen, x["org"]))
+        item["region"], item["loc"] = locations[(item["geo_city"], item["country"])]
+        del item["geo_city"]
+    records.sort(key=lambda x: (int(ip.ip_network(x["cdir"]).network_address),
+                                ip.ip_network(x["cdir"]).prefixlen, x["org"]))
     if len(records) < 10:
         raise RuntimeError(f"Database validation failed: only {len(records)} records")
 
