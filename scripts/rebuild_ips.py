@@ -153,7 +153,7 @@ def main():
         merged.setdefault(key, [])
         try:
             network = ip.ip_network(sort_address or address, strict=False)
-            sort_key = (int(network.network_address), network.prefixlen, label)
+            sort_key = (0 if label.startswith("Roblox") else 1 if "PINGABLE" in label else 2, int(network.network_address), network.prefixlen, label)
         except ValueError:
             sort_key = (0, 0, label)
         merged[key].append((sort_key, f"  - {address} ({label})"))
