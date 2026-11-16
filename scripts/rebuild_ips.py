@@ -114,27 +114,19 @@ def entry_sort_key(entry):
 
 
 def render_grouped_entries(entries, header=None, preserve_order=False):
-    """Render city groups in global alphabetical order, sorting IPs within each city."""
+    """Render countries alphabetically, cities alphabetically, and IPs numerically."""
     grouped = {}
     for entry in entries:
-        grouped.setdefault((entry["city"], entry["country"]), []).append(entry)
+        grouped.setdefault(entry["country"], {}).setdefault(entry["city"], []).append(entry)
 
-    ordered_groups = sorted(
-        grouped.items(),
-        key=lambda item: (item[0][0].casefold(), item[0][1].casefold(), item[0][0]),
-    )
     out = list(header or [])
-    last_country = None
-    for (city, country), rows in ordered_groups:
-        if country != last_country:
-            if last_country is not None:
-                out.append("")
-            out.extend([country, "-" * len(country)])
-            last_country = country
-        out.append(f"- {city}")
-        for entry in sorted(rows, key=entry_sort_key):
-            out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
-    out.append("")
+    for country in sorted(grouped, key=str.casefold):
+        out.extend([country, "-" * len(country)])
+        for city in sorted(grouped[country], key=str.casefold):
+            out.append(f"- {city}")
+            for entry in sorted(grouped[country][city], key=entry_sort_key):
+                out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
+        out.append("")
     return "\n".join(out).rstrip() + "\n"
 
 
@@ -145,30 +137,13 @@ def render_grouped_file(title, separator, today, entries, preserve_order=False):
 
 
 def render_aws_file(title, separator, today, entries):
-    """Render AWS locations in global alphabetical city order."""
-    grouped = {}
-    for entry in entries:
-        grouped.setdefault((entry["city"], entry["country"]), []).append(entry)
-
-    out = [title, separator, f"Last updated: {today}", ""]
-    last_country = None
-    for (city, country), rows in sorted(
-        grouped.items(),
-        key=lambda item: (item[0][0].casefold(), item[0][1].casefold(), item[0][0]),
-    ):
-        if country != last_country:
-            if last_country is not None:
-                out.append("")
-            out.extend([country, "-" * len(country)])
-            last_country = country
-        out.append(f"- {city}")
-        for entry in sorted(rows, key=entry_sort_key):
-            out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
-    return "\n".join(out).rstrip() + "\n"
+    """Render AWS entries grouped by alphabetical country and city."""
+    header = [title, separator, f"Last updated: {today}", ""]
+    return render_grouped_entries(entries, header)
 
 
 def sort_existing_location_file(text):
-    """Sort verified city blocks alphabetically and IP rows numerically."""
+    """Sort verified entries by country, city, then numeric IP; preserve the footer."""
     lines = text.splitlines()
     header = lines[:3]
     blocks = []
@@ -210,8 +185,8 @@ def sort_existing_location_file(text):
     finish_block()
 
     blocks.sort(key=lambda block: (
-        block["city"].casefold(),
         (block["country"] or "").casefold(),
+        block["city"].casefold(),
         block["city"],
     ))
 
@@ -237,6 +212,8 @@ def sort_existing_location_file(text):
         out.append("")
 
     if footer:
+        while out and not out[-1].strip():
+            out.pop()
         out.extend(["", *footer])
     return "\n".join(out).rstrip() + "\n"
 
@@ -447,8 +424,13 @@ def main():
         "cdir": x["cdir"], "city": x["city"], "region": x["region"],
         "country": x["country"], "loc": x["loc"], "org": x["org"]
     } for x in records]
-    records.sort(key=lambda x: (int(ip.ip_network(x["cdir"]).network_address),
-                                ip.ip_network(x["cdir"]).prefixlen, x["org"]))
+    records.sort(key=lambda x: (
+        x["country"].casefold(),
+        x["city"].casefold(),
+        int(ip.ip_network(x["cdir"]).network_address),
+        ip.ip_network(x["cdir"]).prefixlen,
+        x["org"],
+    ))
     if len(records) < 10:
         raise RuntimeError(f"Database validation failed: only {len(records)} records")
 
