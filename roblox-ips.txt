@@ -1,4 +1,4 @@
-Roblox-Registered Roblox Server IP Addresses
+Roblox Roblox Server IP Addresses
 ============================================
 Last updated: 2026-11-23
 
@@ -13,7 +13,6 @@ United States
   - 128.116.2.0/24
 - Chicago, IL
   - 128.116.48.0/24
-  - 128.116.84.0/24 (Not sure, around Chicago)
 - Dallas, TX
   - 128.116.14.0/24
   - 128.116.95.0/24
@@ -33,7 +32,7 @@ United States
   - 209.206.42.0/24
   - 209.206.43.0/24
 - Seattle, WA
-  - 128.116.115.0/24 (.33)
+  - 128.116.115.0/24
 
 Australia
 ---------
