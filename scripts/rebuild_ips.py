@@ -113,7 +113,7 @@ def entry_sort_key(entry):
             entry["country"], entry["city"], entry.get("display", entry.get("raw", "")))
 
 
-def render_grouped_entries(entries, header=None):
+def render_grouped_entries(entries, header=None, blank_between_cities=False):
     """Render country/city headings with IPs sorted low-to-high within each city."""
     grouped = {}
     for entry in entries:
@@ -122,7 +122,10 @@ def render_grouped_entries(entries, header=None):
     out = list(header or [])
     for country in sorted(grouped):
         out.extend([country, "-" * len(country)])
-        for city in sorted(grouped[country]):
+        cities = sorted(grouped[country])
+        for city_index, city in enumerate(cities):
+            if blank_between_cities and city_index:
+                out.append("")
             out.append(f"- {city}")
             for entry in sorted(grouped[country][city], key=entry_sort_key):
                 out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
@@ -134,6 +137,24 @@ def render_grouped_file(title, separator, today, entries):
     """Render the original grouped text format with sorted IPs per city."""
     header = [title, separator, f"Last updated: {today}", ""]
     return render_grouped_entries(entries, header)
+
+
+def render_aws_file(title, separator, today, entries):
+    """Keep the AWS export's original location-by-location layout."""
+    grouped = {}
+    for entry in entries:
+        grouped.setdefault((entry["country"], entry["city"]), []).append(entry)
+
+    out = [title, separator, f"Last updated: {today}", ""]
+    for country, city, *_ in LOCATIONS:
+        rows = grouped.get((country, city), [])
+        if not rows:
+            continue
+        out.extend([country, "-" * len(country), f"- {city}"])
+        for entry in sorted(rows, key=entry_sort_key):
+            out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
+        out.append("")
+    return "\n".join(out).rstrip() + "\n"
 
 
 def sort_existing_location_file(text):
@@ -160,7 +181,7 @@ def sort_existing_location_file(text):
         footer.pop(0)
     while footer and not footer[-1].strip():
         footer.pop()
-    grouped_text = render_grouped_entries(entries, header + [""])
+    grouped_text = render_grouped_entries(entries, header + [""], blank_between_cities=True)
     if footer:
         grouped_text = grouped_text.rstrip() + "\n\n" + "\n".join(footer) + "\n"
     return grouped_text
@@ -303,7 +324,7 @@ def main():
         today,
         all_entries,
     )
-    aws_text = render_grouped_file(
+    aws_text = render_aws_file(
         "AWS IP Ranges Associated with Roblox Servers",
         "============================================",
         today,
