@@ -165,7 +165,7 @@ def sort_existing_location_file(text):
         if not pending:
             return
         def key(line):
-            match = re.match(r"\\s*-\\s*((?:\\d{1,3}\\.){3}\\d{1,3}(?:/\\d{1,2})?)", line)
+            match = re.match(r"\s*-\s*((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)", line)
             if not match:
                 raise ValueError(f"Invalid IP entry: {line}")
             network = ip.ip_network(match.group(1), strict=False)
