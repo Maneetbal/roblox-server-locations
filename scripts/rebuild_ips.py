@@ -188,10 +188,10 @@ def main():
         elif line.startswith("- ") and not line.startswith("  - "):
             # Match AWS city names even when the Roblox source adds a note
             # such as "(Reserved)" to the display name.
-            roblox_city = re.sub(r"\\s*\\([^)]*\\)", "", line[2:]).strip()
+            roblox_city = re.sub(r"\s*\([^)]*\)", "", line[2:]).strip()
         elif line.startswith("  - ") and roblox_country and roblox_city:
             match = re.match(
-                r"\\s*-\\s*((?:\\d{1,3}\\.){3}\\d{1,3}(?:/\\d{1,2})?)(.*)$",
+                r"\s*-\s*((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)(.*)$",
                 line,
             )
             if not match:
@@ -208,7 +208,7 @@ def main():
                 label = "Roblox, PINGABLE"
             else:
                 label = "Roblox"
-            display = f"{network}{(' ' + note) if note else ''} ({label})"
+            display = f"{network}{(' ' + note) if note else ''}"
             add_entry(roblox_country, roblox_city, display, label, str(network))
             roblox_count += 1
 
@@ -225,6 +225,26 @@ def main():
                 out.append(entry)
         out.append("")
     all_text = "\\n".join(out).rstrip() + "\\n"
+
+    # Keep the AWS-only export for existing consumers; all-ips.txt uses
+    # the merged listing above.
+    aws_out = ["AWS IP Ranges Associated with Roblox Servers",
+               "============================================",
+               f"Last updated: {today}", ""]
+    for country, city, *nbgs in LOCATIONS:
+        aws_out.extend([country, "-" * len(country), f"- {city}"])
+        for n in nbgs:
+            r = region(n)
+            if r == n and r in ping:
+                aws_out.append(f"  - {ping[r]}/32 (AWS, PINGABLE)")
+                break
+        nets = set()
+        for n in nbgs:
+            nets.update(ip.collapse_addresses(groups[(region(n), n)]))
+        for net in sorted(nets, key=lambda x: (int(x.network_address), x.prefixlen)):
+            aws_out.append(f"  - {net} (AWS)")
+        aws_out.append("")
+    aws_text = "\\n".join(aws_out).rstrip() + "\\n"
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
     keys = {(x["geo_city"], x["country"]) for x in records}
