@@ -68,7 +68,6 @@ United States
   - 128.116.95.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-dfw2.roblox.com)
 
 - Los Angeles, CA
-  - 128.116.1.0/24 (Confidence=70) (ICMP=No response) (Instance=N/A)
   - 128.116.63.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax4.roblox.com)
   - 128.116.116.0/24 (Confidence=100) (ICMP=.3) (Instance=.33) (Hostname=edge-term4-lax2.roblox.com)
 
