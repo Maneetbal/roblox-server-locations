@@ -113,8 +113,21 @@ def entry_sort_key(entry):
             entry["country"], entry["city"], entry.get("display", entry.get("raw", "")))
 
 
-def render_grouped_entries(entries, header=None, preserve_order=False):
-    """Render countries alphabetically, cities alphabetically, and IPs numerically."""
+def combined_entry_sort_key(entry):
+    """Order Roblox first, AWS ping targets second, and other AWS ranges last."""
+    display = entry.get("display", entry.get("raw", ""))
+    if "(Roblox)" in display or "(Roblox, PINGABLE)" in display:
+        priority = 0
+    elif "(AWS, PINGABLE)" in display:
+        priority = 1
+    else:
+        priority = 2
+    return (priority, *entry_sort_key(entry))
+
+
+def render_grouped_entries(entries, header=None, preserve_order=False,
+                           provider_priority=False):
+    """Render countries, cities, and IPs in their configured order."""
     grouped = {}
     for entry in entries:
         grouped.setdefault(entry["country"], {}).setdefault(entry["city"], []).append(entry)
@@ -124,16 +137,21 @@ def render_grouped_entries(entries, header=None, preserve_order=False):
         out.extend([country, "-" * len(country)])
         for city in sorted(grouped[country], key=str.casefold):
             out.append(f"- {city}")
-            for entry in sorted(grouped[country][city], key=entry_sort_key):
+            sort_key = combined_entry_sort_key if provider_priority else entry_sort_key
+            for entry in sorted(grouped[country][city], key=sort_key):
                 out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
         out.append("")
     return "\n".join(out).rstrip() + "\n"
 
 
-def render_grouped_file(title, separator, today, entries, preserve_order=False):
+def render_grouped_file(title, separator, today, entries, preserve_order=False,
+                        provider_priority=False):
     """Render the original grouped text format with sorted IPs per city."""
     header = [title, separator, f"Last updated: {today}", ""]
-    return render_grouped_entries(entries, header, preserve_order=preserve_order)
+    return render_grouped_entries(
+        entries, header, preserve_order=preserve_order,
+        provider_priority=provider_priority,
+    )
 
 
 def render_aws_file(title, separator, today, entries):
@@ -354,6 +372,7 @@ def main():
         "============================================",
         today,
         all_entries,
+        provider_priority=True,
     )
     aws_text = render_aws_file(
         "AWS IP Ranges Associated with Roblox Servers",
