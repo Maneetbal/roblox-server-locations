@@ -114,21 +114,27 @@ def entry_sort_key(entry):
 
 
 def render_grouped_entries(entries, header=None, preserve_order=False):
-    """Render country/city headings with IPs sorted low-to-high within each city."""
+    """Render city groups in global alphabetical order, sorting IPs within each city."""
     grouped = {}
     for entry in entries:
-        grouped.setdefault(entry["country"], {}).setdefault(entry["city"], []).append(entry)
+        grouped.setdefault((entry["city"], entry["country"]), []).append(entry)
 
+    ordered_groups = sorted(
+        grouped.items(),
+        key=lambda item: (item[0][0].casefold(), item[0][1].casefold(), item[0][0]),
+    )
     out = list(header or [])
-    countries = list(grouped) if preserve_order else sorted(grouped)
-    for country in countries:
-        out.extend([country, "-" * len(country)])
-        cities = list(grouped[country]) if preserve_order else sorted(grouped[country])
-        for city in cities:
-            out.append(f"- {city}")
-            for entry in sorted(grouped[country][city], key=entry_sort_key):
-                out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
-        out.append("")
+    last_country = None
+    for (city, country), rows in ordered_groups:
+        if country != last_country:
+            if last_country is not None:
+                out.append("")
+            out.extend([country, "-" * len(country)])
+            last_country = country
+        out.append(f"- {city}")
+        for entry in sorted(rows, key=entry_sort_key):
+            out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
+    out.append("")
     return "\n".join(out).rstrip() + "\n"
 
 
@@ -139,48 +145,100 @@ def render_grouped_file(title, separator, today, entries, preserve_order=False):
 
 
 def render_aws_file(title, separator, today, entries):
-    """Keep the AWS export's original location-by-location layout."""
+    """Render AWS locations in global alphabetical city order."""
     grouped = {}
     for entry in entries:
-        grouped.setdefault((entry["country"], entry["city"]), []).append(entry)
+        grouped.setdefault((entry["city"], entry["country"]), []).append(entry)
 
     out = [title, separator, f"Last updated: {today}", ""]
-    for country, city, *_ in LOCATIONS:
-        rows = grouped.get((country, city), [])
-        if not rows:
-            continue
-        out.extend([country, "-" * len(country), f"- {city}"])
+    last_country = None
+    for (city, country), rows in sorted(
+        grouped.items(),
+        key=lambda item: (item[0][0].casefold(), item[0][1].casefold(), item[0][0]),
+    ):
+        if country != last_country:
+            if last_country is not None:
+                out.append("")
+            out.extend([country, "-" * len(country)])
+            last_country = country
+        out.append(f"- {city}")
         for entry in sorted(rows, key=entry_sort_key):
             out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
-        out.append("")
     return "\n".join(out).rstrip() + "\n"
 
 
 def sort_existing_location_file(text):
-    """Sort each contiguous IP block without changing headings or spacing."""
-    out = []
-    pending = []
+    """Sort verified city blocks alphabetically and IP rows numerically."""
+    lines = text.splitlines()
+    header = lines[:3]
+    blocks = []
+    footer = []
+    country = None
+    current = None
+    footer_started = False
 
-    def flush():
-        if not pending:
-            return
-        def key(line):
+    def finish_block():
+        nonlocal current
+        if current is not None:
+            blocks.append(current)
+            current = None
+
+    i = 3
+    while i < len(lines):
+        line = lines[i]
+        if (not footer_started and line and not line.startswith((" ", "-"))
+                and i + 1 < len(lines) and re.fullmatch(r"-{3,}", lines[i + 1])):
+            finish_block()
+            country = line
+            i += 2
+            continue
+        if not footer_started and line.startswith("- ") and not line.startswith("  - "):
+            finish_block()
+            current = {"country": country, "city": line[2:], "rows": []}
+            i += 1
+            continue
+        if not footer_started and line.startswith("  - ") and current is not None:
+            current["rows"].append(line)
+            i += 1
+            continue
+        if not line.strip() and not footer_started:
+            i += 1
+            continue
+        footer_started = True
+        footer.append(line)
+        i += 1
+    finish_block()
+
+    blocks.sort(key=lambda block: (
+        block["city"].casefold(),
+        (block["country"] or "").casefold(),
+        block["city"],
+    ))
+
+    out = header + [""]
+    last_country = None
+    for block in blocks:
+        block_country = block["country"] or "Unknown"
+        if block_country != last_country:
+            if last_country is not None:
+                out.append("")
+            out.extend([block_country, "-" * len(block_country)])
+            last_country = block_country
+        out.append("- " + block["city"])
+
+        def ip_key(line):
             match = re.match(r"\s*-\s*((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)", line)
             if not match:
                 raise ValueError(f"Invalid IP entry: {line}")
             network = ip.ip_network(match.group(1), strict=False)
             return (int(network.network_address), network.prefixlen, line)
-        out.extend(sorted(pending, key=key))
-        pending.clear()
 
-    for line in text.splitlines():
-        if line.startswith("  - "):
-            pending.append(line)
-        else:
-            flush()
-            out.append(line)
-    flush()
-    return "\\n".join(out).rstrip() + "\\n"
+        out.extend(sorted(block["rows"], key=ip_key))
+        out.append("")
+
+    if footer:
+        out.extend(["", *footer])
+    return "\n".join(out).rstrip() + "\n"
 
 
 def parse_list(text, org):
@@ -331,7 +389,6 @@ def main():
         "============================================",
         roblox_date,
         roblox_output_entries,
-        preserve_order=True,
     )
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
