@@ -62,25 +62,114 @@ def fetch(url, timeout=40, attempts=6):
 def region(nbg):
     return "-".join(nbg.split("-")[:3])
 
-def parse_list(text, org):
+def extract_entries(text):
+    """Read either the legacy country/city layout or the flat sorted layout."""
+    entries = []
     country = city = None
-    records = []
     lines = text.splitlines()
     for i, line in enumerate(lines):
-        if line and not line.startswith((" ", "-")) and i + 1 < len(lines) and re.fullmatch(r"-{3,}", lines[i + 1]):
+        if (line and not line.startswith((" ", "-")) and i + 1 < len(lines)
+                and re.fullmatch(r"-{3,}", lines[i + 1])):
             country = line.strip()
-        elif line.startswith("- ") and not line.startswith("  - "):
+            city = None
+            continue
+        if line.startswith("- ") and not line.startswith("  - "):
             city = re.sub(r"\s*\([^)]*\)", "", line[2:]).strip()
-        elif line.startswith("  - ") and country and city:
-            m = re.match(r"\s*-\s*((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)", line)
-            if m:
-                try:
-                    records.append({"cdir": str(ip.ip_network(m[1], strict=False)),
-                                    "city": city.split(",")[0].strip(), "geo_city": city,
-                                    "country": country, "org": org})
-                except ValueError:
-                    pass
+            continue
+        if not line.startswith("  - "):
+            continue
+
+        raw = line[4:].strip()
+        metadata = re.search(r"\s+\[City=(.*?); Country=(.*?)\]\s*$", raw)
+        entry_city, entry_country = city, country
+        if metadata:
+            entry_city, entry_country = metadata.group(1).strip(), metadata.group(2).strip()
+            raw = raw[:metadata.start()].rstrip()
+
+        match = re.match(
+            r"((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)(.*)$",
+            raw,
+        )
+        if not match or not entry_city or not entry_country:
+            continue
+        try:
+            network = ip.ip_network(match.group(1), strict=False)
+        except ValueError:
+            continue
+        entries.append({
+            "network": network,
+            "address": match.group(1),
+            "note": match.group(2).strip(),
+            "raw": raw,
+            "city": entry_city,
+            "country": entry_country,
+        })
+    return entries
+
+
+def entry_sort_key(entry):
+    network = entry["network"]
+    return (int(network.network_address), network.prefixlen, str(network),
+            entry["country"], entry["city"], entry.get("display", entry.get("raw", "")))
+
+
+def render_flat_file(title, separator, today, entries):
+    """Render IP rows globally sorted by numeric network address."""
+    out = [title, separator, f"Last updated: {today}", ""]
+    for entry in sorted(entries, key=entry_sort_key):
+        out.append(
+            f"  - {entry['display']} [City={entry['city']}; Country={entry['country']}]"
+        )
+    return "\n".join(out).rstrip() + "\n"
+
+
+def sort_existing_location_file(text):
+    """Flatten and sort a manually maintained country/city IP file."""
+    lines = text.splitlines()
+    header = lines[:3]
+    entries = extract_entries(text)
+    footer = []
+    for i, line in enumerate(lines[3:], 3):
+        if not line.strip():
+            if footer:
+                footer.append("")
+            continue
+        if i + 1 < len(lines) and re.fullmatch(r"-{3,}", lines[i + 1]):
+            continue
+        if re.fullmatch(r"-{3,}", line):
+            continue
+        if line.startswith("- ") and not line.startswith("  - "):
+            continue
+        if line.startswith("  - "):
+            continue
+        footer.append(line)
+    while footer and not footer[0].strip():
+        footer.pop(0)
+    while footer and not footer[-1].strip():
+        footer.pop()
+    out = header + [""]
+    for entry in sorted(entries, key=entry_sort_key):
+        out.append(
+            f"  - {entry['raw']} [City={entry['city']}; Country={entry['country']}]"
+        )
+    if footer:
+        out.extend(["", *footer])
+    return "\n".join(out).rstrip() + "\n"
+
+
+def parse_list(text, org):
+    records = []
+    for entry in extract_entries(text):
+        network = entry["network"]
+        records.append({
+            "cdir": str(network),
+            "city": entry["city"].split(",")[0].strip(),
+            "geo_city": entry["city"],
+            "country": entry["country"],
+            "org": org,
+        })
     return records
+
 
 def geocode(key):
     global _last_nominatim
@@ -145,18 +234,22 @@ def main():
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-    # Build one combined country/city listing. Keep AWS and Roblox entries
-    # together instead of publishing separate sections in all-ips.txt.
-    merged = {}
+    # Build globally sorted AWS and combined lists. Location metadata stays on
+    # each row so sorting is independent of country/city grouping.
+    all_entries = []
+    aws_entries = []
+
     def add_entry(country, city, address, label, sort_address=None):
-        key = (country, city)
-        merged.setdefault(key, [])
-        try:
-            network = ip.ip_network(sort_address or address, strict=False)
-            sort_key = (0 if label.startswith("Roblox") else 1 if "PINGABLE" in label else 2, int(network.network_address), network.prefixlen, label)
-        except ValueError:
-            sort_key = (0, 0, label)
-        merged[key].append((sort_key, f"  - {address} ({label})"))
+        network = ip.ip_network(sort_address or address, strict=False)
+        entry = {
+            "network": network,
+            "display": f"{address} ({label})",
+            "city": city,
+            "country": country,
+        }
+        all_entries.append(entry)
+        if label.startswith("AWS"):
+            aws_entries.append(entry)
 
     aws_count = ping_count = 0
     for country, city, *nbgs in LOCATIONS:
@@ -169,84 +262,50 @@ def main():
         nets = set()
         for n in nbgs:
             nets.update(ip.collapse_addresses(groups[(region(n), n)]))
-        for net in sorted(nets, key=lambda x: (int(x.network_address), x.prefixlen)):
+        for net in nets:
             add_entry(country, city, str(net), "AWS")
             aws_count += 1
     if not aws_count or not ping_count:
         raise RuntimeError(f"AWS validation failed: {aws_count} CIDRs, {ping_count} pingable IPs")
 
-    roblox_text = Path("roblox-ips.txt").read_text(encoding="utf-8")
+    roblox_source_text = Path("roblox-ips.txt").read_text(encoding="utf-8")
+    roblox_entries = extract_entries(roblox_source_text)
+    roblox_flat_entries = []
     roblox_count = 0
-    roblox_country = roblox_city = None
-    roblox_lines = roblox_text.splitlines()
-    for i, line in enumerate(roblox_lines):
-        if (line and not line.startswith((" ", "-"))
-                and i + 1 < len(roblox_lines)
-                and re.fullmatch(r"-{3,}", roblox_lines[i + 1])):
-            roblox_country = line.strip()
-            roblox_city = None
-        elif line.startswith("- ") and not line.startswith("  - "):
-            # Match AWS city names even when the Roblox source adds a note
-            # such as "(Reserved)" to the display name.
-            roblox_city = re.sub(r"\s*\([^)]*\)", "", line[2:]).strip()
-        elif line.startswith("  - ") and roblox_country and roblox_city:
-            match = re.match(
-                r"\s*-\s*((?:\d{1,3}\.){3}\d{1,3}(?:/\d{1,2})?)(.*)$",
-                line,
-            )
-            if not match:
-                continue
-            address, note = match.groups()
-            try:
-                network = ip.ip_network(address, strict=False)
-            except ValueError:
-                continue
-            note = note.strip()
-            # Keep source annotations (for example the instance suffix or
-            # an ICMP note), while always identifying the address as Roblox.
-            if "PINGABLE" in note.upper():
-                label = "Roblox, PINGABLE"
-            else:
-                label = "Roblox"
-            display = f"{network}{(' ' + note) if note else ''}"
-            add_entry(roblox_country, roblox_city, display, label, str(network))
-            roblox_count += 1
+    for entry in roblox_entries:
+        network = entry["network"]
+        note = entry["note"]
+        label = "Roblox, PINGABLE" if "PINGABLE" in note.upper() else "Roblox"
+        display = f"{network}{(' ' + note) if note else ''}"
+        add_entry(entry["country"], entry["city"], display, label, str(network))
+        roblox_flat_entries.append({
+            "network": network,
+            "display": entry["raw"],
+            "city": entry["city"],
+            "country": entry["country"],
+        })
+        roblox_count += 1
 
-    out = ["Combined Roblox and AWS Server IP Addresses",
-           "============================================",
-           f"Last updated: {today}", ""]
-    countries = sorted({country for country, _ in merged})
-    for country in countries:
-        out.extend([country, "-" * len(country)])
-        cities = sorted(city for c, city in merged if c == country)
-        for city in cities:
-            out.append(f"- {city}")
-            for _, entry in sorted(merged[(country, city)], key=lambda item: item[0]):
-                out.append(entry)
-        out.append("")
-    all_text = "\n".join(out).rstrip() + "\n"
+    all_text = render_flat_file(
+        "Combined Roblox and AWS Server IP Addresses",
+        "============================================",
+        today,
+        all_entries,
+    )
+    aws_text = render_flat_file(
+        "AWS IP Ranges Associated with Roblox Servers",
+        "============================================",
+        today,
+        aws_entries,
+    )
+    roblox_flat_text = render_flat_file(
+        "Roblox Roblox Server IP Addresses",
+        "============================================",
+        datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        roblox_flat_entries,
+    )
 
-    # Keep the AWS-only export for existing consumers; all-ips.txt uses
-    # the merged listing above.
-    aws_out = ["AWS IP Ranges Associated with Roblox Servers",
-               "============================================",
-               f"Last updated: {today}", ""]
-    for country, city, *nbgs in LOCATIONS:
-        aws_out.extend([country, "-" * len(country), f"- {city}"])
-        for n in nbgs:
-            r = region(n)
-            if r == n and r in ping:
-                aws_out.append(f"  - {ping[r]}/32 (AWS, PINGABLE)")
-                break
-        nets = set()
-        for n in nbgs:
-            nets.update(ip.collapse_addresses(groups[(region(n), n)]))
-        for net in sorted(nets, key=lambda x: (int(x.network_address), x.prefixlen)):
-            aws_out.append(f"  - {net} (AWS)")
-        aws_out.append("")
-    aws_text = "\n".join(aws_out).rstrip() + "\n"
-
-    records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
+    records = parse_list(aws_text, "AWS") + parse_list(roblox_source_text, "Roblox")
     keys = {(x["geo_city"], x["country"]) for x in records}
     cache = {"version": 1, "locations": {}}
     if CACHE_FILE.exists():
@@ -309,6 +368,9 @@ def main():
 
     Path("aws-ips.txt").write_text(aws_text, encoding="utf-8")
     Path("all-ips.txt").write_text(all_text, encoding="utf-8")
+    Path("roblox-ips.txt").write_text(roblox_flat_text, encoding="utf-8")
+    verified_text = sort_existing_location_file(Path("roblox-verified-ips.txt").read_text(encoding="utf-8"))
+    Path("roblox-verified-ips.txt").write_text(verified_text, encoding="utf-8")
     database = "\n".join(
         json.dumps(item, indent=2, ensure_ascii=False) for item in records
     ) + "\n"
