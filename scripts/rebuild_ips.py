@@ -113,18 +113,31 @@ def entry_sort_key(entry):
             entry["country"], entry["city"], entry.get("display", entry.get("raw", "")))
 
 
-def render_flat_file(title, separator, today, entries):
-    """Render IP rows globally sorted by numeric network address."""
-    out = [title, separator, f"Last updated: {today}", ""]
-    for entry in sorted(entries, key=entry_sort_key):
-        out.append(
-            f"  - {entry['display']} [City={entry['city']}; Country={entry['country']}]"
-        )
+def render_grouped_entries(entries, header=None):
+    """Render country/city headings with IPs sorted low-to-high within each city."""
+    grouped = {}
+    for entry in entries:
+        grouped.setdefault(entry["country"], {}).setdefault(entry["city"], []).append(entry)
+
+    out = list(header or [])
+    for country in sorted(grouped):
+        out.extend([country, "-" * len(country)])
+        for city in sorted(grouped[country]):
+            out.append(f"- {city}")
+            for entry in sorted(grouped[country][city], key=entry_sort_key):
+                out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
+        out.append("")
     return "\n".join(out).rstrip() + "\n"
 
 
+def render_grouped_file(title, separator, today, entries):
+    """Render the original grouped text format with sorted IPs per city."""
+    header = [title, separator, f"Last updated: {today}", ""]
+    return render_grouped_entries(entries, header)
+
+
 def sort_existing_location_file(text):
-    """Flatten and sort a manually maintained country/city IP file."""
+    """Keep the verified file's original headings and sort IPs within each city."""
     lines = text.splitlines()
     header = lines[:3]
     entries = extract_entries(text)
@@ -147,14 +160,10 @@ def sort_existing_location_file(text):
         footer.pop(0)
     while footer and not footer[-1].strip():
         footer.pop()
-    out = header + [""]
-    for entry in sorted(entries, key=entry_sort_key):
-        out.append(
-            f"  - {entry['raw']} [City={entry['city']}; Country={entry['country']}]"
-        )
+    grouped_text = render_grouped_entries(entries, header + [""])
     if footer:
-        out.extend(["", *footer])
-    return "\n".join(out).rstrip() + "\n"
+        grouped_text = grouped_text.rstrip() + "\n\n" + "\n".join(footer) + "\n"
+    return grouped_text
 
 
 def parse_list(text, org):
@@ -272,7 +281,7 @@ def main():
     roblox_date_match = re.search(r"^Last updated:\s*(.+)$", roblox_source_text, re.MULTILINE)
     roblox_date = roblox_date_match.group(1).strip() if roblox_date_match else today
     roblox_entries = extract_entries(roblox_source_text)
-    roblox_flat_entries = []
+    roblox_output_entries = []
     roblox_count = 0
     for entry in roblox_entries:
         network = entry["network"]
@@ -280,34 +289,34 @@ def main():
         label = "Roblox, PINGABLE" if "PINGABLE" in note.upper() else "Roblox"
         display = f"{network}{(' ' + note) if note else ''}"
         add_entry(entry["country"], entry["city"], display, label, str(network))
-        roblox_flat_entries.append({
+        roblox_output_entries.append({
             "network": network,
-            "display": entry["raw"],
+            "raw": entry["raw"],
             "city": entry["city"],
             "country": entry["country"],
         })
         roblox_count += 1
 
-    all_text = render_flat_file(
+    all_text = render_grouped_file(
         "Combined Roblox and AWS Server IP Addresses",
         "============================================",
         today,
         all_entries,
     )
-    aws_text = render_flat_file(
+    aws_text = render_grouped_file(
         "AWS IP Ranges Associated with Roblox Servers",
         "============================================",
         today,
         aws_entries,
     )
-    roblox_flat_text = render_flat_file(
+    roblox_text = render_grouped_file(
         "Roblox Roblox Server IP Addresses",
         "============================================",
         roblox_date,
-        roblox_flat_entries,
+        roblox_output_entries,
     )
 
-    records = parse_list(aws_text, "AWS") + parse_list(roblox_source_text, "Roblox")
+    records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
     keys = {(x["geo_city"], x["country"]) for x in records}
     cache = {"version": 1, "locations": {}}
     if CACHE_FILE.exists():
@@ -370,7 +379,7 @@ def main():
 
     Path("aws-ips.txt").write_text(aws_text, encoding="utf-8")
     Path("all-ips.txt").write_text(all_text, encoding="utf-8")
-    Path("roblox-ips.txt").write_text(roblox_flat_text, encoding="utf-8")
+    Path("roblox-ips.txt").write_text(roblox_text, encoding="utf-8")
     verified_text = sort_existing_location_file(Path("roblox-verified-ips.txt").read_text(encoding="utf-8"))
     Path("roblox-verified-ips.txt").write_text(verified_text, encoding="utf-8")
     database = "\n".join(
