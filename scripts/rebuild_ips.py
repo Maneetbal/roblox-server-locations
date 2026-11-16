@@ -113,19 +113,18 @@ def entry_sort_key(entry):
             entry["country"], entry["city"], entry.get("display", entry.get("raw", "")))
 
 
-def render_grouped_entries(entries, header=None, blank_between_cities=False):
+def render_grouped_entries(entries, header=None, preserve_order=False):
     """Render country/city headings with IPs sorted low-to-high within each city."""
     grouped = {}
     for entry in entries:
         grouped.setdefault(entry["country"], {}).setdefault(entry["city"], []).append(entry)
 
     out = list(header or [])
-    for country in sorted(grouped):
+    countries = list(grouped) if preserve_order else sorted(grouped)
+    for country in countries:
         out.extend([country, "-" * len(country)])
-        cities = sorted(grouped[country])
-        for city_index, city in enumerate(cities):
-            if blank_between_cities and city_index:
-                out.append("")
+        cities = list(grouped[country]) if preserve_order else sorted(grouped[country])
+        for city in cities:
             out.append(f"- {city}")
             for entry in sorted(grouped[country][city], key=entry_sort_key):
                 out.append(f"  - {entry.get('display', entry.get('raw', ''))}")
@@ -133,10 +132,10 @@ def render_grouped_entries(entries, header=None, blank_between_cities=False):
     return "\n".join(out).rstrip() + "\n"
 
 
-def render_grouped_file(title, separator, today, entries):
+def render_grouped_file(title, separator, today, entries, preserve_order=False):
     """Render the original grouped text format with sorted IPs per city."""
     header = [title, separator, f"Last updated: {today}", ""]
-    return render_grouped_entries(entries, header)
+    return render_grouped_entries(entries, header, preserve_order=preserve_order)
 
 
 def render_aws_file(title, separator, today, entries):
@@ -158,33 +157,30 @@ def render_aws_file(title, separator, today, entries):
 
 
 def sort_existing_location_file(text):
-    """Keep the verified file's original headings and sort IPs within each city."""
-    lines = text.splitlines()
-    header = lines[:3]
-    entries = extract_entries(text)
-    footer = []
-    for i, line in enumerate(lines[3:], 3):
-        if not line.strip():
-            if footer:
-                footer.append("")
-            continue
-        if i + 1 < len(lines) and re.fullmatch(r"-{3,}", lines[i + 1]):
-            continue
-        if re.fullmatch(r"-{3,}", line):
-            continue
-        if line.startswith("- ") and not line.startswith("  - "):
-            continue
+    """Sort each contiguous IP block without changing headings or spacing."""
+    out = []
+    pending = []
+
+    def flush():
+        if not pending:
+            return
+        def key(line):
+            match = re.match(r"\\s*-\\s*((?:\\d{1,3}\\.){3}\\d{1,3}(?:/\\d{1,2})?)", line)
+            if not match:
+                raise ValueError(f"Invalid IP entry: {line}")
+            network = ip.ip_network(match.group(1), strict=False)
+            return (int(network.network_address), network.prefixlen, line)
+        out.extend(sorted(pending, key=key))
+        pending.clear()
+
+    for line in text.splitlines():
         if line.startswith("  - "):
-            continue
-        footer.append(line)
-    while footer and not footer[0].strip():
-        footer.pop(0)
-    while footer and not footer[-1].strip():
-        footer.pop()
-    grouped_text = render_grouped_entries(entries, header + [""], blank_between_cities=True)
-    if footer:
-        grouped_text = grouped_text.rstrip() + "\n\n" + "\n".join(footer) + "\n"
-    return grouped_text
+            pending.append(line)
+        else:
+            flush()
+            out.append(line)
+    flush()
+    return "\\n".join(out).rstrip() + "\\n"
 
 
 def parse_list(text, org):
@@ -335,6 +331,7 @@ def main():
         "============================================",
         roblox_date,
         roblox_output_entries,
+        preserve_order=True,
     )
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
