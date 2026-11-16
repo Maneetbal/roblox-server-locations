@@ -1,6 +1,6 @@
 AWS IP Ranges Associated with Roblox Servers
 ============================================
-Last updated: 2026-11-15
+Last updated: 2026-11-16
 
 United States
 -------------
