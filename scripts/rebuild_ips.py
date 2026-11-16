@@ -224,7 +224,7 @@ def main():
             for _, entry in sorted(merged[(country, city)], key=lambda item: item[0]):
                 out.append(entry)
         out.append("")
-    all_text = "\\n".join(out).rstrip() + "\\n"
+    all_text = "\n".join(out).rstrip() + "\n"
 
     # Keep the AWS-only export for existing consumers; all-ips.txt uses
     # the merged listing above.
@@ -244,7 +244,7 @@ def main():
         for net in sorted(nets, key=lambda x: (int(x.network_address), x.prefixlen)):
             aws_out.append(f"  - {net} (AWS)")
         aws_out.append("")
-    aws_text = "\\n".join(aws_out).rstrip() + "\\n"
+    aws_text = "\n".join(aws_out).rstrip() + "\n"
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
     keys = {(x["geo_city"], x["country"]) for x in records}
