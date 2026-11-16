@@ -2,37 +2,84 @@ Roblox Roblox Server IP Addresses
 ============================================
 Last updated: 2026-11-23
 
-  - 107.180.197.0/24 (Doesnt respond to icmp) [City=Ashburn, VA; Country=United States]
-  - 128.116.1.0/24 [City=Los Angeles, CA; Country=United States]
-  - 128.116.2.0/24 [City=Atlanta, GA; Country=United States]
-  - 128.116.5.0/24 [City=Frankfurt, DE; Country=Germany]
-  - 128.116.13.0/24 [City=Paris, FR; Country=France]
-  - 128.116.14.0/24 [City=Dallas, TX; Country=United States]
-  - 128.116.21.0/24 [City=Amsterdam, NL; Country=Netherlands]
-  - 128.116.30.0/24 [City=New York City, NY; Country=United States]
-  - 128.116.31.0/24 [City=London, UK; Country=United Kingdom]
-  - 128.116.32.0/24 [City=New York City, NY; Country=United States]
-  - 128.116.44.0/24 [City=Frankfurt, DE; Country=Germany]
-  - 128.116.45.0/24 [City=Miami, FL; Country=United States]
-  - 128.116.46.0/24 [City=Singapore, SG; Country=Singapore]
-  - 128.116.47.0/24 [City=Mumbai, IN; Country=India]
-  - 128.116.48.0/24 [City=Chicago, IL; Country=United States]
-  - 128.116.50.0/24 [City=Singapore, SG; Country=Singapore]
-  - 128.116.51.0/24 [City=Sydney, AU; Country=Australia]
-  - 128.116.53.0/24 [City=Ashburn, VA; Country=United States]
-  - 128.116.54.0/24 [City=Singapore, SG; Country=Singapore]
-  - 128.116.55.0/24 [City=Tokyo, JP; Country=Japan]
-  - 128.116.56.0/24 [City=Ashburn, VA; Country=United States]
-  - 128.116.63.0/24 [City=Los Angeles, CA; Country=United States]
-  - 128.116.67.0/24 [City=San Jose, CA; Country=United States]
-  - 128.116.86.0/24 [City=Sao Paulo, BR; Country=Brazil]
-  - 128.116.95.0/24 [City=Dallas, TX; Country=United States]
-  - 128.116.97.0/24 [City=Singapore, SG; Country=Singapore]
-  - 128.116.102.0/24 [City=Ashburn, VA; Country=United States]
-  - 128.116.115.0/24 [City=Seattle, WA; Country=United States]
-  - 128.116.116.0/24 [City=Los Angeles, CA; Country=United States]
-  - 128.116.117.0/24 [City=San Jose, CA; Country=United States]
-  - 128.116.120.0/24 [City=Tokyo, JP; Country=Japan]
-  - 128.116.127.0/24 [City=Miami, FL; Country=United States]
-  - 209.206.42.0/24 [City=San Jose, CA; Country=United States]
-  - 209.206.43.0/24 [City=San Jose, CA; Country=United States]
+Australia
+---------
+- Sydney, AU
+  - 128.116.51.0/24
+
+Brazil
+------
+- Sao Paulo, BR
+  - 128.116.86.0/24
+
+France
+------
+- Paris, FR
+  - 128.116.13.0/24
+
+Germany
+-------
+- Frankfurt, DE
+  - 128.116.5.0/24
+  - 128.116.44.0/24
+
+India
+-----
+- Mumbai, IN
+  - 128.116.47.0/24
+
+Japan
+-----
+- Tokyo, JP
+  - 128.116.55.0/24
+  - 128.116.120.0/24
+
+Netherlands
+-----------
+- Amsterdam, NL
+  - 128.116.21.0/24
+
+Singapore
+---------
+- Singapore, SG
+  - 128.116.46.0/24
+  - 128.116.50.0/24
+  - 128.116.54.0/24
+  - 128.116.97.0/24
+
+United Kingdom
+--------------
+- London, UK
+  - 128.116.31.0/24
+
+United States
+-------------
+- Ashburn, VA
+  - 107.180.197.0/24 (Doesnt respond to icmp)
+  - 128.116.53.0/24
+  - 128.116.56.0/24
+  - 128.116.102.0/24
+- Atlanta, GA
+  - 128.116.2.0/24
+- Chicago, IL
+  - 128.116.48.0/24
+- Dallas, TX
+  - 128.116.14.0/24
+  - 128.116.95.0/24
+- Los Angeles, CA
+  - 128.116.1.0/24
+  - 128.116.63.0/24
+  - 128.116.116.0/24
+- Miami, FL
+  - 128.116.45.0/24
+  - 128.116.127.0/24
+- New York City, NY
+  - 128.116.30.0/24
+  - 128.116.32.0/24
+- San Jose, CA
+  - 128.116.67.0/24
+  - 128.116.117.0/24
+  - 209.206.42.0/24
+  - 209.206.43.0/24
+- Seattle, WA
+  - 128.116.115.0/24
