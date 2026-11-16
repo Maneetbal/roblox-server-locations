@@ -5,7 +5,7 @@ Last updated: 2026-11-16
 United States
 -------------
 - Ashburn, VA
-  - 3.80.0.0/32 (PINGABLE)
+  - 3.80.0.0/32 (AWS, PINGABLE)
   - 1.178.4.0/23 (AWS)
   - 1.178.6.0/24 (AWS)
   - 3.2.50.0/23 (AWS)
@@ -473,7 +473,7 @@ United States
 United States
 -------------
 - Boardman, OR
-  - 16.144.0.0/32 (PINGABLE)
+  - 16.144.0.0/32 (AWS, PINGABLE)
   - 1.178.1.0/24 (AWS)
   - 1.178.9.0/24 (AWS)
   - 1.178.65.0/24 (AWS)
@@ -658,7 +658,7 @@ United States
 United States
 -------------
 - Columbus, OH
-  - 3.12.0.0/32 (PINGABLE)
+  - 3.12.0.0/32 (AWS, PINGABLE)
   - 1.178.8.0/24 (AWS)
   - 1.179.2.0/23 (AWS)
   - 3.2.67.0/24 (AWS)
@@ -808,7 +808,7 @@ United States
 United States
 -------------
 - San Jose, CA
-  - 13.52.0.0/32 (PINGABLE)
+  - 13.52.0.0/32 (AWS, PINGABLE)
   - 1.178.100.0/24 (AWS)
   - 3.2.54.0/24 (AWS)
   - 3.2.86.0/24 (AWS)
@@ -998,7 +998,7 @@ Argentina
 Brazil
 ------
 - Sao Paulo, BR
-  - 15.228.0.0/32 (PINGABLE)
+  - 15.228.0.0/32 (AWS, PINGABLE)
   - 1.178.95.0/24 (AWS)
   - 3.2.49.0/24 (AWS)
   - 3.2.80.0/24 (AWS)
@@ -1124,7 +1124,7 @@ Chile
 Germany
 -------
 - Frankfurt, DE
-  - 3.64.0.0/32 (PINGABLE)
+  - 3.64.0.0/32 (AWS, PINGABLE)
   - 1.178.10.0/24 (AWS)
   - 3.2.53.0/24 (AWS)
   - 3.2.70.0/24 (AWS)
@@ -1311,7 +1311,7 @@ Greece
 India
 -----
 - Mumbai, IN
-  - 3.6.0.0/32 (PINGABLE)
+  - 3.6.0.0/32 (AWS, PINGABLE)
   - 1.178.88.0/24 (AWS)
   - 3.2.69.0/24 (AWS)
   - 3.2.116.0/24 (AWS)
@@ -1429,7 +1429,7 @@ India
 Indonesia
 ---------
 - Jakarta, ID
-  - 15.232.0.0/32 (PINGABLE)
+  - 15.232.0.0/32 (AWS, PINGABLE)
   - 1.178.19.0/24 (AWS)
   - 3.2.98.0/24 (AWS)
   - 3.5.36.0/22 (AWS)
@@ -1475,7 +1475,7 @@ Indonesia
 Ireland
 -------
 - Dublin, IE
-  - 3.248.0.0/32 (PINGABLE)
+  - 3.248.0.0/32 (AWS, PINGABLE)
   - 1.178.7.0/24 (AWS)
   - 3.2.57.0/24 (AWS)
   - 3.2.59.0/24 (AWS)
@@ -1691,7 +1691,7 @@ Ireland
 Israel
 ------
 - Tel Aviv, IL
-  - 16.164.0.0/32 (PINGABLE)
+  - 16.164.0.0/32 (AWS, PINGABLE)
   - 1.178.25.0/24 (AWS)
   - 3.2.95.0/24 (AWS)
   - 3.2.127.0/24 (AWS)
@@ -1729,7 +1729,7 @@ Israel
 Italy
 -----
 - Milan, IT
-  - 15.160.0.0/32 (PINGABLE)
+  - 15.160.0.0/32 (AWS, PINGABLE)
   - 1.178.17.0/24 (AWS)
   - 3.2.93.0/24 (AWS)
   - 3.2.114.0/24 (AWS)
@@ -1857,7 +1857,7 @@ Italy
 Japan
 -----
 - Osaka, JP
-  - 13.208.32.253/32 (PINGABLE)
+  - 13.208.32.253/32 (AWS, PINGABLE)
   - 1.178.101.0/24 (AWS)
   - 3.2.82.0/24 (AWS)
   - 3.2.120.0/24 (AWS)
@@ -1911,7 +1911,7 @@ Japan
 Malaysia
 --------
 - Kuala Lumpur, MY
-  - 43.216.149.220/32 (PINGABLE)
+  - 43.216.149.220/32 (AWS, PINGABLE)
   - 1.178.102.0/24 (AWS)
   - 3.2.91.0/24 (AWS)
   - 3.2.123.0/24 (AWS)
@@ -1948,7 +1948,7 @@ Malaysia
 Mexico
 ------
 - Queretaro, MX
-  - 78.12.118.87/32 (PINGABLE)
+  - 78.12.118.87/32 (AWS, PINGABLE)
   - 1.178.29.0/24 (AWS)
   - 3.2.94.0/24 (AWS)
   - 3.5.192.0/22 (AWS)
@@ -1992,7 +1992,7 @@ Poland
 Singapore
 ---------
 - Singapore, SG
-  - 3.0.0.9/32 (PINGABLE)
+  - 3.0.0.9/32 (AWS, PINGABLE)
   - 1.178.89.0/24 (AWS)
   - 3.0.0.0/15 (AWS)
   - 3.2.76.0/24 (AWS)
@@ -2146,7 +2146,7 @@ Singapore
 South Africa
 ------------
 - Cape Town, ZA
-  - 13.245.0.253/32 (PINGABLE)
+  - 13.245.0.253/32 (AWS, PINGABLE)
   - 1.178.18.0/24 (AWS)
   - 3.2.87.0/24 (AWS)
   - 3.5.202.0/23 (AWS)
@@ -2196,7 +2196,7 @@ South Africa
 Switzerland
 -----------
 - Zurich, CH
-  - 16.18.0.0/32 (PINGABLE)
+  - 16.18.0.0/32 (AWS, PINGABLE)
   - 1.178.21.0/24 (AWS)
   - 3.2.97.0/24 (AWS)
   - 3.4.12.85/32 (AWS)

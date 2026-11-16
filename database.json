@@ -14455,7 +14455,7 @@
   "org": "Roblox"
 }
 {
-  "cdir": "128.116.30.3/32",
+  "cdir": "128.116.30.0/24",
   "city": "New York City",
   "region": "New York",
   "country": "United States",
@@ -14580,14 +14580,6 @@
   "region": "California",
   "country": "United States",
   "loc": "37.3362,-121.8906",
-  "org": "Roblox"
-}
-{
-  "cdir": "128.116.84.0/24",
-  "city": "Chicago",
-  "region": "Illinois",
-  "country": "United States",
-  "loc": "41.8756,-87.6244",
   "org": "Roblox"
 }
 {
