@@ -2,10 +2,55 @@ Roblox Roblox Server IP Addresses
 ============================================
 Last updated: 2026-11-23
 
+Australia
+---------
+- Sydney, AU
+  - 128.116.51.0/24
+
+Brazil
+------
+- Sao Paulo, BR
+  - 128.116.86.0/24
+
+France
+------
+- Paris, FR
+  - 128.116.13.0/24
+
+Germany
+-------
+- Frankfurt, DE
+  - 128.116.5.0/24
+  - 128.116.44.0/24
+
+India
+-----
+- Mumbai, IN
+  - 128.116.47.0/24
+
+Japan
+-----
+- Tokyo, JP
+  - 128.116.55.0/24
+  - 128.116.120.0/24
+
 Netherlands
 -----------
 - Amsterdam, NL
   - 128.116.21.0/24
+
+Singapore
+---------
+- Singapore, SG
+  - 128.116.46.0/24
+  - 128.116.50.0/24
+  - 128.116.54.0/24
+  - 128.116.97.0/24
+
+United Kingdom
+--------------
+- London, UK
+  - 128.116.31.0/24
 
 United States
 -------------
@@ -21,20 +66,6 @@ United States
 - Dallas, TX
   - 128.116.14.0/24
   - 128.116.95.0/24
-
-Germany
--------
-- Frankfurt, DE
-  - 128.116.5.0/24
-  - 128.116.44.0/24
-
-United Kingdom
---------------
-- London, UK
-  - 128.116.31.0/24
-
-United States
--------------
 - Los Angeles, CA
   - 128.116.1.0/24
   - 128.116.63.0/24
@@ -42,56 +73,13 @@ United States
 - Miami, FL
   - 128.116.45.0/24
   - 128.116.127.0/24
-
-India
------
-- Mumbai, IN
-  - 128.116.47.0/24
-
-United States
--------------
 - New York City, NY
   - 128.116.30.0/24
   - 128.116.32.0/24
-
-France
-------
-- Paris, FR
-  - 128.116.13.0/24
-
-United States
--------------
 - San Jose, CA (Reserved)
   - 128.116.67.0/24
   - 128.116.117.0/24
   - 209.206.42.0/24
   - 209.206.43.0/24
-
-Brazil
-------
-- Sao Paulo, BR
-  - 128.116.86.0/24
-
-United States
--------------
 - Seattle, WA
   - 128.116.115.0/24
-
-Singapore
----------
-- Singapore, SG
-  - 128.116.46.0/24
-  - 128.116.50.0/24
-  - 128.116.54.0/24
-  - 128.116.97.0/24
-
-Australia
----------
-- Sydney, AU
-  - 128.116.51.0/24
-
-Japan
------
-- Tokyo, JP
-  - 128.116.55.0/24
-  - 128.116.120.0/24
