@@ -269,7 +269,7 @@ def main():
         raise RuntimeError(f"AWS validation failed: {aws_count} CIDRs, {ping_count} pingable IPs")
 
     roblox_source_text = Path("roblox-ips.txt").read_text(encoding="utf-8")
-    roblox_date_match = re.search(r"^Last updated:\\s*(.+)$", roblox_source_text, re.MULTILINE)
+    roblox_date_match = re.search(r"^Last updated:\s*(.+)$", roblox_source_text, re.MULTILINE)
     roblox_date = roblox_date_match.group(1).strip() if roblox_date_match else today
     roblox_entries = extract_entries(roblox_source_text)
     roblox_flat_entries = []
