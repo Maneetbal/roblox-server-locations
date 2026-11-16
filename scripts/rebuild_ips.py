@@ -144,34 +144,87 @@ def main():
                 pass
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    out = ["AWS IP Ranges Associated with Roblox Servers", "============================================",
-           f"Last updated: {today}", ""]
+
+    # Build one combined country/city listing. Keep AWS and Roblox entries
+    # together instead of publishing separate sections in all-ips.txt.
+    merged = {}
+    def add_entry(country, city, address, label, sort_address=None):
+        key = (country, city)
+        merged.setdefault(key, [])
+        try:
+            network = ip.ip_network(sort_address or address, strict=False)
+            sort_key = (int(network.network_address), network.prefixlen, label)
+        except ValueError:
+            sort_key = (0, 0, label)
+        merged[key].append((sort_key, f"  - {address} ({label})"))
+
     aws_count = ping_count = 0
     for country, city, *nbgs in LOCATIONS:
-        out += [country, "-" * len(country), f"- {city}"]
         for n in nbgs:
             r = region(n)
             if r == n and r in ping:
-                out.append(f"  - {ping[r]}/32 (PINGABLE)")
+                add_entry(country, city, f"{ping[r]}/32", "AWS, PINGABLE")
                 ping_count += 1
                 break
         nets = set()
         for n in nbgs:
             nets.update(ip.collapse_addresses(groups[(region(n), n)]))
         for net in sorted(nets, key=lambda x: (int(x.network_address), x.prefixlen)):
-            out.append(f"  - {net} (AWS)")
+            add_entry(country, city, str(net), "AWS")
             aws_count += 1
-        out.append("")
     if not aws_count or not ping_count:
         raise RuntimeError(f"AWS validation failed: {aws_count} CIDRs, {ping_count} pingable IPs")
 
-    aws_text = "\n".join(out).rstrip() + "\n"
     roblox_text = Path("roblox-ips.txt").read_text(encoding="utf-8")
-    all_text = ("Combined Roblox and AWS Server IP Addresses\n"
-                "============================================\n"
-                f"Last updated: {today}\n\nAWS IP RANGES\n==============\n\n"
-                + aws_text + "\nROBLOX-REGISTERED IP RANGES\n===========================\n\n"
-                + roblox_text.rstrip() + "\n")
+    roblox_count = 0
+    roblox_country = roblox_city = None
+    roblox_lines = roblox_text.splitlines()
+    for i, line in enumerate(roblox_lines):
+        if (line and not line.startswith((" ", "-"))
+                and i + 1 < len(roblox_lines)
+                and re.fullmatch(r"-{3,}", roblox_lines[i + 1])):
+            roblox_country = line.strip()
+            roblox_city = None
+        elif line.startswith("- ") and not line.startswith("  - "):
+            # Match AWS city names even when the Roblox source adds a note
+            # such as "(Reserved)" to the display name.
+            roblox_city = re.sub(r"\\s*\\([^)]*\\)", "", line[2:]).strip()
+        elif line.startswith("  - ") and roblox_country and roblox_city:
+            match = re.match(
+                r"\\s*-\\s*((?:\\d{1,3}\\.){3}\\d{1,3}(?:/\\d{1,2})?)(.*)$",
+                line,
+            )
+            if not match:
+                continue
+            address, note = match.groups()
+            try:
+                network = ip.ip_network(address, strict=False)
+            except ValueError:
+                continue
+            note = note.strip()
+            # Keep source annotations (for example the instance suffix or
+            # an ICMP note), while always identifying the address as Roblox.
+            if "PINGABLE" in note.upper():
+                label = "Roblox, PINGABLE"
+            else:
+                label = "Roblox"
+            display = f"{network}{(' ' + note) if note else ''} ({label})"
+            add_entry(roblox_country, roblox_city, display, label, str(network))
+            roblox_count += 1
+
+    out = ["Combined Roblox and AWS Server IP Addresses",
+           "============================================",
+           f"Last updated: {today}", ""]
+    countries = sorted({country for country, _ in merged})
+    for country in countries:
+        out.extend([country, "-" * len(country)])
+        cities = sorted(city for c, city in merged if c == country)
+        for city in cities:
+            out.append(f"- {city}")
+            for _, entry in sorted(merged[(country, city)], key=lambda item: item[0]):
+                out.append(entry)
+        out.append("")
+    all_text = "\\n".join(out).rstrip() + "\\n"
 
     records = parse_list(aws_text, "AWS") + parse_list(roblox_text, "Roblox")
     keys = {(x["geo_city"], x["country"]) for x in records}
