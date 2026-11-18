@@ -10623,6 +10623,14 @@
   "org": "AWS"
 }
 {
+  "cdir": "40.163.4.0/24",
+  "city": "Ashburn",
+  "region": "Virginia",
+  "country": "United States",
+  "loc": "39.0437,-77.4875",
+  "org": "AWS"
+}
+{
   "cdir": "40.235.64.0/18",
   "city": "Ashburn",
   "region": "Virginia",

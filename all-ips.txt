@@ -1,6 +1,6 @@
 Combined Roblox and AWS Server IP Addresses
 ============================================
-Last updated: 2026-11-17
+Last updated: 2026-11-18
 
 Argentina
 ---------
@@ -1430,6 +1430,7 @@ United States
   - 35.153.0.0/16 (AWS)
   - 35.168.0.0/13 (AWS)
   - 40.163.0.0/24 (AWS)
+  - 40.163.4.0/24 (AWS)
   - 40.235.64.0/18 (AWS)
   - 44.192.0.0/11 (AWS)
   - 45.33.163.0/24 (AWS)
