@@ -1,6 +1,6 @@
 AWS IP Ranges Associated with Roblox Servers
 ============================================
-Last updated: 2026-11-20
+Last updated: 2026-11-21
 
 Argentina
 ---------
@@ -211,6 +211,7 @@ Germany
   - 35.71.105.0/24 (AWS)
   - 35.156.0.0/14 (AWS)
   - 37.203.157.0/24 (AWS)
+  - 40.163.5.0/24 (AWS)
   - 45.33.182.0/24 (AWS)
   - 51.0.64.0/18 (AWS)
   - 51.102.0.0/16 (AWS)

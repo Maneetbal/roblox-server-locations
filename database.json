@@ -1575,6 +1575,14 @@
   "org": "AWS"
 }
 {
+  "cdir": "40.163.5.0/24",
+  "city": "Frankfurt",
+  "region": "Hessen",
+  "country": "Germany",
+  "loc": "50.1106,8.6821",
+  "org": "AWS"
+}
+{
   "cdir": "45.33.182.0/24",
   "city": "Frankfurt",
   "region": "Hessen",
