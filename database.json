@@ -2687,6 +2687,14 @@
   "org": "AWS"
 }
 {
+  "cdir": "15.248.200.0/26",
+  "city": "Mumbai",
+  "region": "Maharashtra",
+  "country": "India",
+  "loc": "19.0550,72.8692",
+  "org": "AWS"
+}
+{
   "cdir": "15.252.0.0/16",
   "city": "Mumbai",
   "region": "Maharashtra",
@@ -3352,6 +3360,14 @@
 }
 {
   "cdir": "1.178.19.0/24",
+  "city": "Jakarta",
+  "region": "Jawa",
+  "country": "Indonesia",
+  "loc": "-6.1754,106.8272",
+  "org": "AWS"
+}
+{
+  "cdir": "1.178.86.0/24",
   "city": "Jakarta",
   "region": "Jawa",
   "country": "Indonesia",
