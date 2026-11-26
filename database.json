@@ -13559,6 +13559,14 @@
   "org": "AWS"
 }
 {
+  "cdir": "15.248.208.128/26",
+  "city": "Boardman",
+  "region": "Oregon",
+  "country": "United States",
+  "loc": "45.8399,-119.7006",
+  "org": "AWS"
+}
+{
   "cdir": "16.12.88.0/21",
   "city": "Boardman",
   "region": "Oregon",
