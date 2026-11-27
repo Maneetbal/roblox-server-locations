@@ -1,6 +1,6 @@
 AWS IP Ranges Associated with Roblox Servers
 ============================================
-Last updated: 2026-11-26
+Last updated: 2026-11-27
 
 Argentina
 ---------
@@ -444,7 +444,6 @@ Indonesia
 ---------
 - Jakarta, ID
   - 1.178.19.0/24 (AWS)
-  - 1.178.86.0/24 (AWS)
   - 3.2.98.0/24 (AWS)
   - 3.5.36.0/22 (AWS)
   - 13.248.71.0/24 (AWS)
